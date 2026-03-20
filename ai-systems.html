@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Systems — Momentum</title>
+  <meta name="description" content="We build fully autonomous AI systems — agents, automations, and intelligent infrastructure — that run your business while you focus on growth.">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+  <style>
+    .nav, .sidebar { opacity: 0; transition: opacity 0.8s ease; }
+    .nav.loaded, .sidebar.loaded { opacity: 1; }
+
+    /* ── Star field */
+    #star-container { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; overflow:hidden; }
+    .star { position:absolute; background:white; border-radius:50%; opacity:0.8; animation:twinkle var(--duration,3s) infinite ease-in-out; will-change:transform,opacity; }
+    @keyframes twinkle { 0%,100%{opacity:0.18;transform:scale(0.8)} 50%{opacity:0.7;transform:scale(1.2)} }
+
+    /* ── Page background — deep red-black gradient */
+    body {
+      background:
+        radial-gradient(ellipse at 15% 50%, rgba(120,0,0,0.32) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 15%, rgba(80,0,0,0.28) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 90%, rgba(60,0,0,0.22) 0%, transparent 48%),
+        #000;
+    }
+    @media(max-width:768px){#canvas{display:none!important}}
+
+    /* ── Red accent tokens */
+    :root {
+      --red:      #e53935;
+      --red-dim:  rgba(229,57,53,0.18);
+      --red-glow: rgba(229,57,53,0.08);
+      --red-line: rgba(229,57,53,0.30);
+    }
+
+    /* hero-visual override for AI page — larger than default */
+    @media(min-width:769px){
+      .page-hero .hero-visual { width:62vw; max-width:820px; }
+    }
+
+    /* ── Neural net SVG animations */
+    @keyframes aiRingDraw   { from{stroke-dashoffset:1200} to{stroke-dashoffset:0} }
+    @keyframes aiRing2Draw  { from{stroke-dashoffset:2200} to{stroke-dashoffset:0} }
+    @keyframes aiSpoke      { from{stroke-dashoffset:220}  to{stroke-dashoffset:0} }
+    @keyframes aiSpokeOut   { from{stroke-dashoffset:300}  to{stroke-dashoffset:0} }
+    @keyframes aiNodeIn     { 0%{transform:scale(0);opacity:0} 65%{transform:scale(1.3);opacity:1} 100%{transform:scale(1);opacity:1} }
+    @keyframes aiCenterIn   { 0%{transform:scale(0);opacity:0} 70%{transform:scale(1.2);opacity:1} 100%{transform:scale(1);opacity:1} }
+    @keyframes aiLabelIn    { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes aiGlow       { 0%,100%{opacity:0.06;transform:scale(1)} 50%{opacity:0.2;transform:scale(1.08)} }
+    @keyframes aiGlow2      { 0%,100%{opacity:0.04;transform:scale(1)} 50%{opacity:0.14;transform:scale(1.05)} }
+    /* data packet flowing along paths */
+    @keyframes aiPacket1    { 0%{offset-distance:0%;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{offset-distance:100%;opacity:0} }
+
+    /* inner ring */
+    .ai-ring1  { stroke-dasharray:1200; stroke-dashoffset:1200; animation:aiRingDraw 1.4s ease-out 0.1s forwards; }
+    /* outer ring */
+    .ai-ring2  { stroke-dasharray:2200; stroke-dashoffset:2200; animation:aiRing2Draw 1.8s ease-out 0.2s forwards; }
+    /* center */
+    .ai-core   { transform-origin:400px 280px; transform:scale(0); opacity:0; animation:aiCenterIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.0s forwards; }
+    .ai-glow1  { transform-origin:400px 280px; opacity:0; animation:aiGlow  3.2s 1.8s infinite; }
+    .ai-glow2  { transform-origin:400px 280px; opacity:0; animation:aiGlow2 4.0s 2.0s infinite; }
+
+    /* inner spokes */
+    .ai-si1{stroke-dasharray:220;stroke-dashoffset:220;animation:aiSpoke 0.5s ease-out 1.1s forwards;}
+    .ai-si2{stroke-dasharray:220;stroke-dashoffset:220;animation:aiSpoke 0.5s ease-out 1.22s forwards;}
+    .ai-si3{stroke-dasharray:220;stroke-dashoffset:220;animation:aiSpoke 0.5s ease-out 1.34s forwards;}
+    .ai-si4{stroke-dasharray:220;stroke-dashoffset:220;animation:aiSpoke 0.5s ease-out 1.46s forwards;}
+    .ai-si5{stroke-dasharray:220;stroke-dashoffset:220;animation:aiSpoke 0.5s ease-out 1.58s forwards;}
+    .ai-si6{stroke-dasharray:220;stroke-dashoffset:220;animation:aiSpoke 0.5s ease-out 1.70s forwards;}
+
+    /* outer spokes */
+    .ai-so1{stroke-dasharray:300;stroke-dashoffset:300;animation:aiSpokeOut 0.55s ease-out 1.8s forwards;}
+    .ai-so2{stroke-dasharray:300;stroke-dashoffset:300;animation:aiSpokeOut 0.55s ease-out 1.92s forwards;}
+    .ai-so3{stroke-dasharray:300;stroke-dashoffset:300;animation:aiSpokeOut 0.55s ease-out 2.04s forwards;}
+    .ai-so4{stroke-dasharray:300;stroke-dashoffset:300;animation:aiSpokeOut 0.55s ease-out 2.16s forwards;}
+    .ai-so5{stroke-dasharray:300;stroke-dashoffset:300;animation:aiSpokeOut 0.55s ease-out 2.28s forwards;}
+    .ai-so6{stroke-dasharray:300;stroke-dashoffset:300;animation:aiSpokeOut 0.55s ease-out 2.40s forwards;}
+    .ai-so7{stroke-dasharray:300;stroke-dashoffset:300;animation:aiSpokeOut 0.55s ease-out 2.52s forwards;}
+    .ai-so8{stroke-dasharray:300;stroke-dashoffset:300;animation:aiSpokeOut 0.55s ease-out 2.64s forwards;}
+
+    /* inner nodes */
+    .ai-ni1{transform-origin:420px 220px;transform:scale(0);opacity:0;animation:aiNodeIn 0.45s cubic-bezier(0.34,1.56,0.64,1) 1.2s forwards;}
+    .ai-ni2{transform-origin:370px 307px;transform:scale(0);opacity:0;animation:aiNodeIn 0.45s cubic-bezier(0.34,1.56,0.64,1) 1.34s forwards;}
+    .ai-ni3{transform-origin:270px 307px;transform:scale(0);opacity:0;animation:aiNodeIn 0.45s cubic-bezier(0.34,1.56,0.64,1) 1.48s forwards;}
+    .ai-ni4{transform-origin:220px 220px;transform:scale(0);opacity:0;animation:aiNodeIn 0.45s cubic-bezier(0.34,1.56,0.64,1) 1.62s forwards;}
+    .ai-ni5{transform-origin:270px 133px;transform:scale(0);opacity:0;animation:aiNodeIn 0.45s cubic-bezier(0.34,1.56,0.64,1) 1.76s forwards;}
+    .ai-ni6{transform-origin:370px 133px;transform:scale(0);opacity:0;animation:aiNodeIn 0.45s cubic-bezier(0.34,1.56,0.64,1) 1.90s forwards;}
+
+    /* outer nodes */
+    .ai-no1{transform-origin:510px 220px;transform:scale(0);opacity:0;animation:aiNodeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 1.95s forwards;}
+    .ai-no2{transform-origin:461px 348px;transform:scale(0);opacity:0;animation:aiNodeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 2.07s forwards;}
+    .ai-no3{transform-origin:320px 400px;transform:scale(0);opacity:0;animation:aiNodeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 2.19s forwards;}
+    .ai-no4{transform-origin:179px 348px;transform:scale(0);opacity:0;animation:aiNodeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 2.31s forwards;}
+    .ai-no5{transform-origin:130px 220px;transform:scale(0);opacity:0;animation:aiNodeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 2.43s forwards;}
+    .ai-no6{transform-origin:179px 92px;transform:scale(0);opacity:0;animation:aiNodeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 2.55s forwards;}
+    .ai-no7{transform-origin:320px 40px;transform:scale(0);opacity:0;animation:aiNodeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 2.67s forwards;}
+    .ai-no8{transform-origin:461px 92px;transform:scale(0);opacity:0;animation:aiNodeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 2.79s forwards;}
+
+    /* labels */
+    .ai-lc  {opacity:0;animation:aiLabelIn 0.35s ease-out 1.15s forwards;}
+    .ai-li1 {opacity:0;animation:aiLabelIn 0.35s ease-out 1.30s forwards;}
+    .ai-li2 {opacity:0;animation:aiLabelIn 0.35s ease-out 1.44s forwards;}
+    .ai-li3 {opacity:0;animation:aiLabelIn 0.35s ease-out 1.58s forwards;}
+    .ai-li4 {opacity:0;animation:aiLabelIn 0.35s ease-out 1.72s forwards;}
+    .ai-li5 {opacity:0;animation:aiLabelIn 0.35s ease-out 1.86s forwards;}
+    .ai-li6 {opacity:0;animation:aiLabelIn 0.35s ease-out 2.00s forwards;}
+    .ai-lo1 {opacity:0;animation:aiLabelIn 0.3s ease-out 2.05s forwards;}
+    .ai-lo2 {opacity:0;animation:aiLabelIn 0.3s ease-out 2.17s forwards;}
+    .ai-lo3 {opacity:0;animation:aiLabelIn 0.3s ease-out 2.29s forwards;}
+    .ai-lo4 {opacity:0;animation:aiLabelIn 0.3s ease-out 2.41s forwards;}
+    .ai-lo5 {opacity:0;animation:aiLabelIn 0.3s ease-out 2.53s forwards;}
+    .ai-lo6 {opacity:0;animation:aiLabelIn 0.3s ease-out 2.65s forwards;}
+    .ai-lo7 {opacity:0;animation:aiLabelIn 0.3s ease-out 2.77s forwards;}
+    .ai-lo8 {opacity:0;animation:aiLabelIn 0.3s ease-out 2.89s forwards;}
+
+    /* flowing data packets */
+    .packet {
+      r:3;
+      fill:var(--red);
+      opacity:0;
+      animation:aiPacket1 2.2s ease-in-out infinite;
+    }
+    .p1{animation-delay:2.6s;}
+    .p2{animation-delay:3.1s;}
+    .p3{animation-delay:3.6s;}
+    .p4{animation-delay:4.1s;}
+    .p5{animation-delay:4.6s;}
+    .p6{animation-delay:5.1s;}
+
+    /* ── Capability cards */
+    .cap-grid {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:1px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:12px;
+      overflow:hidden;
+      margin-top:48px;
+    }
+    @media(max-width:820px){.cap-grid{grid-template-columns:1fr 1fr;}}
+    @media(max-width:500px){.cap-grid{grid-template-columns:1fr;}}
+    .cap-card {
+      background:#000;
+      padding:32px 28px;
+      transition:background 0.2s;
+      position:relative;
+      overflow:hidden;
+    }
+    .cap-card::before {
+      content:'';
+      position:absolute;
+      top:0;left:0;right:0;
+      height:1.5px;
+      background:linear-gradient(90deg,transparent,var(--red),transparent);
+      opacity:0;
+      transition:opacity 0.3s;
+    }
+    .cap-card:hover { background:rgba(229,57,53,0.03); }
+    .cap-card:hover::before { opacity:1; }
+    .cap-icon {
+      width:36px;height:36px;
+      border-radius:8px;
+      background:var(--red-dim);
+      border:1px solid rgba(229,57,53,0.2);
+      display:flex;align-items:center;justify-content:center;
+      margin-bottom:16px;
+    }
+    .cap-icon svg { width:16px;height:16px; stroke:var(--red); }
+    .cap-title { font-size:14px;font-weight:600;margin-bottom:8px;letter-spacing:-0.01em; }
+    .cap-desc  { font-size:12.5px;color:rgba(255,255,255,0.42);line-height:1.7; }
+
+    /* ── Platform pills (red tint) */
+    .platform-grid {
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:32px;
+    }
+    .platform-pill {
+      padding:9px 18px;
+      border:1px solid rgba(229,57,53,0.22);
+      border-radius:100px;
+      font-size:12.5px;
+      color:rgba(255,255,255,0.65);
+      background:rgba(229,57,53,0.05);
+      transition:all 0.2s;
+    }
+    .platform-pill:hover {
+      border-color:rgba(229,57,53,0.5);
+      color:#fff;
+      background:rgba(229,57,53,0.1);
+    }
+
+    /* ── Security strip */
+    .security-row {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:1px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:10px;
+      overflow:hidden;
+      margin-top:40px;
+    }
+    @media(max-width:700px){.security-row{grid-template-columns:1fr 1fr;}}
+    .sec-block {
+      background:#000;
+      padding:24px 22px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .sec-block-icon { color:var(--red); font-size:18px; }
+    .sec-block-title { font-size:13px;font-weight:600; }
+    .sec-block-body  { font-size:12px;color:rgba(255,255,255,0.38);line-height:1.6; }
+
+    /* ── Stats row — red accent */
+    .ai-stats-row {
+      display:flex;
+      gap:0;
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:10px;
+      overflow:hidden;
+      margin-top:48px;
+    }
+    .ai-stat-block {
+      flex:1;
+      padding:32px 28px;
+      border-right:1px solid rgba(255,255,255,0.06);
+      background:#000;
+    }
+    .ai-stat-block:last-child{border-right:none;}
+    .ai-stat-num {
+      font-size:clamp(28px,3.5vw,48px);
+      font-weight:700;
+      letter-spacing:-0.03em;
+      color:var(--red);
+      line-height:1;
+      margin-bottom:8px;
+    }
+    .ai-stat-label { font-size:12px;color:rgba(255,255,255,0.4);line-height:1.5; }
+    @media(max-width:600px){.ai-stats-row{flex-direction:column;} .ai-stat-block{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06);} .ai-stat-block:last-child{border-bottom:none;}}
+
+    /* ── CTA red variant */
+    .ai-cta-strip {
+      margin:0 5vw 0;
+      padding:56px 48px;
+      border:1px solid rgba(229,57,53,0.18);
+      border-radius:14px;
+      background:linear-gradient(135deg, rgba(229,57,53,0.06) 0%, rgba(0,0,0,0) 60%);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:24px;
+      position:relative;
+      z-index:5;
+    }
+    @media(max-width:640px){.ai-cta-strip{flex-direction:column;align-items:flex-start;padding:36px 28px;}}
+    .ai-cta-text { font-family:'Poppins',sans-serif;font-size:clamp(20px,2.5vw,32px);font-weight:600;letter-spacing:-0.02em;line-height:1.2; }
+    .ai-cta-text span { color:var(--red); }
+    .ai-cta-btn {
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:14px 28px;
+      background:var(--red);
+      color:#fff;
+      border-radius:6px;
+      font-size:13px;
+      font-weight:600;
+      letter-spacing:0.02em;
+      white-space:nowrap;
+      transition:background 0.2s,transform 0.2s;
+      flex-shrink:0;
+    }
+    .ai-cta-btn:hover { background:#c62828; transform:translateY(-1px); }
+
+    /* ── Section label red */
+    .red-label {
+      font-size:10.5px;
+      letter-spacing:0.3em;
+      text-transform:uppercase;
+      color:var(--red);
+      opacity:0.7;
+      margin-bottom:22px;
+    }
+
+    /* ── Process list (reuse existing .process-list styles, red accent) */
+    .process-item .process-num { color:var(--red) !important; border-color:rgba(229,57,53,0.18) !important; }
+  </style>
+</head>
+<body>
+
+  <div id="star-container"></div>
+  <canvas id="canvas"></canvas>
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div class="page-transition" id="pageTransition"></div>
+
+  <!-- Nav -->
+  <nav class="nav" id="mainNav">
+    <div class="nav-left">
+      <button class="nav-menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+          <line x1="0" y1="1" x2="14" y2="1" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="0" y1="9" x2="14" y2="9" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Menu
+      </button>
+    </div>
+    <a href="index.html" class="nav-logo">Momentum</a>
+    <div class="nav-right">
+      <div class="nav-location-time">
+        <span class="nav-location">NYC</span>
+        <span class="nav-time">00:00:00</span>
+      </div>
+      <a href="book-a-call.html" class="nav-email-btn" aria-label="Book a Call">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Menu Overlay -->
+  <div class="menu-overlay" id="menuOverlay" role="dialog" aria-modal="true">
+    <button class="nav-menu-btn menu-close-btn" id="menuClose" style="position:absolute;top:20px;left:24px;" aria-label="Close menu">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Close
+    </button>
+    <nav class="menu-links">
+      <a href="index.html"       class="menu-link-item"><span class="menu-link-num">01</span><span class="menu-link-text">Home</span></a>
+      <a href="meta-ads.html"    class="menu-link-item"><span class="menu-link-num">02</span><span class="menu-link-text">Marketing / Ads</span></a>
+      <a href="crm-systems.html" class="menu-link-item"><span class="menu-link-num">03</span><span class="menu-link-text">CRM Systems</span></a>
+      <a href="web-design.html"  class="menu-link-item"><span class="menu-link-num">04</span><span class="menu-link-text">Web Design</span></a>
+      <a href="interfaces.html"  class="menu-link-item"><span class="menu-link-num">05</span><span class="menu-link-text">Interfaces</span></a>
+      <a href="ai-systems.html"  class="menu-link-item" style="color:var(--red);opacity:1;"><span class="menu-link-num" style="color:var(--red);opacity:0.7;">06</span><span class="menu-link-text">AI Systems</span></a>
+      <a href="all-work.html"    class="menu-link-item"><span class="menu-link-num">07</span><span class="menu-link-text">All Work</span></a>
+      <a href="book-a-call.html" class="menu-link-item"><span class="menu-link-num">08</span><span class="menu-link-text">Book a Call</span></a>
+    </nav>
+    <div class="menu-footer">
+      <div class="menu-footer-col"><span class="menu-footer-label">Email</span><span class="menu-footer-val">hello@momentum.agency</span></div>
+      <div class="menu-footer-col"><span class="menu-footer-label">Social</span><span class="menu-footer-val">@momentum.agency</span></div>
+      <div class="menu-footer-col"><span class="menu-footer-label">Based</span><span class="menu-footer-val">New York City</span></div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="mainSidebar">
+    <a href="meta-ads.html"    class="sidebar-item">Marketing / Ads</a>
+    <a href="crm-systems.html" class="sidebar-item">CRM Systems</a>
+    <a href="web-design.html"  class="sidebar-item">Web Design</a>
+    <a href="interfaces.html"  class="sidebar-item">Interfaces</a>
+    <a href="ai-systems.html"  class="sidebar-item active">AI Systems</a>
+    <a href="all-work.html"    class="sidebar-item">All Work</a>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- ── HERO ── -->
+    <div class="page-hero">
+      <div class="hero-bg" style="background:transparent;"></div>
+
+      <!-- Neural Network — right side visual, matches site pattern -->
+      <div class="hero-visual">
+        <svg viewBox="0 0 800 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;overflow:visible;">
+
+          <!-- Outer ring -->
+          <circle class="ai-ring2" cx="400" cy="280" r="250" fill="none" stroke="rgba(229,57,53,0.07)" stroke-width="1"/>
+          <!-- Inner ring -->
+          <circle class="ai-ring1" cx="400" cy="280" r="140" fill="none" stroke="rgba(229,57,53,0.13)" stroke-width="1"/>
+
+          <!-- Glow halos -->
+          <circle class="ai-glow1" cx="400" cy="280" r="65"  fill="none" stroke="rgba(229,57,53,0.22)" stroke-width="1.5"/>
+          <circle class="ai-glow2" cx="400" cy="280" r="185" fill="none" stroke="rgba(229,57,53,0.07)" stroke-width="1"/>
+
+          <!-- Motion paths (hidden) -->
+          <defs>
+            <path id="psi1" d="M400,280 L540,280"/>
+            <path id="psi2" d="M400,280 L470,401"/>
+            <path id="psi3" d="M400,280 L330,401"/>
+            <path id="psi4" d="M400,280 L260,280"/>
+            <path id="psi5" d="M400,280 L330,159"/>
+            <path id="psi6" d="M400,280 L470,159"/>
+            <path id="pso1" d="M540,280 L631,184"/>
+            <path id="pso2" d="M470,401 L631,376"/>
+            <path id="pso3" d="M470,401 L496,511"/>
+            <path id="pso4" d="M330,401 L304,511"/>
+            <path id="pso5" d="M330,401 L169,376"/>
+            <path id="pso6" d="M260,280 L169,184"/>
+            <path id="pso7" d="M330,159 L304,49"/>
+            <path id="pso8" d="M470,159 L496,49"/>
+            <!-- reverse paths for inbound trails -->
+            <path id="rsi1" d="M540,280 L400,280"/>
+            <path id="rsi3" d="M330,401 L400,280"/>
+            <path id="rsi5" d="M330,159 L400,280"/>
+            <path id="rso2" d="M631,376 L470,401"/>
+            <path id="rso5" d="M169,376 L330,401"/>
+            <path id="rso7" d="M304,49  L330,159"/>
+          </defs>
+
+          <!-- Inner spokes -->
+          <line class="ai-si1" x1="400" y1="280" x2="540" y2="280" stroke="rgba(229,57,53,0.25)" stroke-width="1"/>
+          <line class="ai-si2" x1="400" y1="280" x2="470" y2="401" stroke="rgba(229,57,53,0.25)" stroke-width="1"/>
+          <line class="ai-si3" x1="400" y1="280" x2="330" y2="401" stroke="rgba(229,57,53,0.25)" stroke-width="1"/>
+          <line class="ai-si4" x1="400" y1="280" x2="260" y2="280" stroke="rgba(229,57,53,0.25)" stroke-width="1"/>
+          <line class="ai-si5" x1="400" y1="280" x2="330" y2="159" stroke="rgba(229,57,53,0.25)" stroke-width="1"/>
+          <line class="ai-si6" x1="400" y1="280" x2="470" y2="159" stroke="rgba(229,57,53,0.25)" stroke-width="1"/>
+
+          <!-- Outer spokes -->
+          <line class="ai-so1" x1="540" y1="280" x2="631" y2="184" stroke="rgba(229,57,53,0.13)" stroke-width="1"/>
+          <line class="ai-so2" x1="470" y1="401" x2="631" y2="376" stroke="rgba(229,57,53,0.13)" stroke-width="1"/>
+          <line class="ai-so3" x1="470" y1="401" x2="496" y2="511" stroke="rgba(229,57,53,0.13)" stroke-width="1"/>
+          <line class="ai-so4" x1="330" y1="401" x2="304" y2="511" stroke="rgba(229,57,53,0.13)" stroke-width="1"/>
+          <line class="ai-so5" x1="330" y1="401" x2="169" y2="376" stroke="rgba(229,57,53,0.13)" stroke-width="1"/>
+          <line class="ai-so6" x1="260" y1="280" x2="169" y2="184" stroke="rgba(229,57,53,0.13)" stroke-width="1"/>
+          <line class="ai-so7" x1="330" y1="159" x2="304" y2="49"  stroke="rgba(229,57,53,0.13)" stroke-width="1"/>
+          <line class="ai-so8" x1="470" y1="159" x2="496" y2="49"  stroke="rgba(229,57,53,0.13)" stroke-width="1"/>
+
+          <!-- ── LIGHT TRAILS — outbound (center → nodes) -->
+          <circle r="2.5" fill="rgba(229,57,53,0.9)" opacity="0">
+            <animateMotion dur="1.8s" repeatCount="indefinite" begin="2.6s"><mpath href="#psi1"/></animateMotion>
+            <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="2.6s"/>
+          </circle>
+          <circle r="2.5" fill="rgba(229,57,53,0.9)" opacity="0">
+            <animateMotion dur="1.8s" repeatCount="indefinite" begin="3.5s"><mpath href="#psi1"/></animateMotion>
+            <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="3.5s"/>
+          </circle>
+          <circle r="2.5" fill="rgba(229,57,53,0.9)" opacity="0">
+            <animateMotion dur="1.9s" repeatCount="indefinite" begin="2.9s"><mpath href="#psi2"/></animateMotion>
+            <animate attributeName="opacity" values="0;1;1;0" dur="1.9s" repeatCount="indefinite" begin="2.9s"/>
+          </circle>
+          <circle r="2.5" fill="rgba(229,57,53,0.9)" opacity="0">
+            <animateMotion dur="1.9s" repeatCount="indefinite" begin="4.1s"><mpath href="#psi3"/></animateMotion>
+            <animate attributeName="opacity" values="0;1;1;0" dur="1.9s" repeatCount="indefinite" begin="4.1s"/>
+          </circle>
+          <circle r="2.5" fill="rgba(229,57,53,0.9)" opacity="0">
+            <animateMotion dur="1.8s" repeatCount="indefinite" begin="3.2s"><mpath href="#psi4"/></animateMotion>
+            <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="3.2s"/>
+          </circle>
+          <circle r="2.5" fill="rgba(229,57,53,0.9)" opacity="0">
+            <animateMotion dur="1.9s" repeatCount="indefinite" begin="3.8s"><mpath href="#psi5"/></animateMotion>
+            <animate attributeName="opacity" values="0;1;1;0" dur="1.9s" repeatCount="indefinite" begin="3.8s"/>
+          </circle>
+          <circle r="2.5" fill="rgba(229,57,53,0.9)" opacity="0">
+            <animateMotion dur="1.8s" repeatCount="indefinite" begin="4.4s"><mpath href="#psi6"/></animateMotion>
+            <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite" begin="4.4s"/>
+          </circle>
+
+          <!-- ── LIGHT TRAILS — inbound (nodes → center) -->
+          <circle r="2" fill="rgba(255,180,180,0.75)" opacity="0">
+            <animateMotion dur="2.0s" repeatCount="indefinite" begin="3.0s"><mpath href="#rsi1"/></animateMotion>
+            <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.0s" repeatCount="indefinite" begin="3.0s"/>
+          </circle>
+          <circle r="2" fill="rgba(255,180,180,0.75)" opacity="0">
+            <animateMotion dur="2.0s" repeatCount="indefinite" begin="4.8s"><mpath href="#rsi3"/></animateMotion>
+            <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.0s" repeatCount="indefinite" begin="4.8s"/>
+          </circle>
+          <circle r="2" fill="rgba(255,180,180,0.75)" opacity="0">
+            <animateMotion dur="2.0s" repeatCount="indefinite" begin="5.6s"><mpath href="#rsi5"/></animateMotion>
+            <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.0s" repeatCount="indefinite" begin="5.6s"/>
+          </circle>
+
+          <!-- ── LIGHT TRAILS — outer layer -->
+          <circle r="2" fill="rgba(255,255,255,0.5)" opacity="0">
+            <animateMotion dur="2.2s" repeatCount="indefinite" begin="3.4s"><mpath href="#pso1"/></animateMotion>
+            <animate attributeName="opacity" values="0;0.6;0.6;0" dur="2.2s" repeatCount="indefinite" begin="3.4s"/>
+          </circle>
+          <circle r="2" fill="rgba(255,255,255,0.5)" opacity="0">
+            <animateMotion dur="2.2s" repeatCount="indefinite" begin="4.2s"><mpath href="#pso3"/></animateMotion>
+            <animate attributeName="opacity" values="0;0.6;0.6;0" dur="2.2s" repeatCount="indefinite" begin="4.2s"/>
+          </circle>
+          <circle r="2" fill="rgba(255,255,255,0.5)" opacity="0">
+            <animateMotion dur="2.2s" repeatCount="indefinite" begin="5.0s"><mpath href="#pso6"/></animateMotion>
+            <animate attributeName="opacity" values="0;0.6;0.6;0" dur="2.2s" repeatCount="indefinite" begin="5.0s"/>
+          </circle>
+          <circle r="2" fill="rgba(255,255,255,0.5)" opacity="0">
+            <animateMotion dur="2.2s" repeatCount="indefinite" begin="5.8s"><mpath href="#pso8"/></animateMotion>
+            <animate attributeName="opacity" values="0;0.6;0.6;0" dur="2.2s" repeatCount="indefinite" begin="5.8s"/>
+          </circle>
+          <circle r="2" fill="rgba(229,57,53,0.7)" opacity="0">
+            <animateMotion dur="2.0s" repeatCount="indefinite" begin="6.2s"><mpath href="#rso2"/></animateMotion>
+            <animate attributeName="opacity" values="0;0.7;0.7;0" dur="2.0s" repeatCount="indefinite" begin="6.2s"/>
+          </circle>
+          <circle r="2" fill="rgba(229,57,53,0.7)" opacity="0">
+            <animateMotion dur="2.0s" repeatCount="indefinite" begin="4.6s"><mpath href="#rso5"/></animateMotion>
+            <animate attributeName="opacity" values="0;0.7;0.7;0" dur="2.0s" repeatCount="indefinite" begin="4.6s"/>
+          </circle>
+          <circle r="2" fill="rgba(229,57,53,0.7)" opacity="0">
+            <animateMotion dur="2.0s" repeatCount="indefinite" begin="6.8s"><mpath href="#rso7"/></animateMotion>
+            <animate attributeName="opacity" values="0;0.7;0.7;0" dur="2.0s" repeatCount="indefinite" begin="6.8s"/>
+          </circle>
+
+          <!-- ── CENTER NODE — simple happy AI robot -->
+          <g class="ai-core">
+            <!-- outer glow ring -->
+            <circle cx="400" cy="280" r="52" fill="rgba(229,57,53,0.05)" stroke="rgba(229,57,53,0.25)" stroke-width="1.5"/>
+            <!-- background -->
+            <circle cx="400" cy="280" r="38" fill="rgba(8,2,2,0.92)" stroke="rgba(229,57,53,0.50)" stroke-width="1.5"/>
+
+            <!-- Antenna -->
+            <line x1="400" y1="248" x2="400" y2="256" stroke="rgba(255,255,255,0.60)" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="400" cy="246" r="2.8" fill="rgba(229,57,53,1)"/>
+
+            <!-- Round dome head -->
+            <circle cx="400" cy="269" r="17" fill="rgba(229,57,53,0.08)" stroke="rgba(255,255,255,0.80)" stroke-width="1.8"/>
+
+            <!-- Ear pads — outline only, no fill dots -->
+            <circle cx="383" cy="269" r="5.5" fill="none" stroke="rgba(255,255,255,0.50)" stroke-width="1.4"/>
+            <circle cx="417" cy="269" r="5.5" fill="none" stroke="rgba(255,255,255,0.50)" stroke-width="1.4"/>
+
+            <!-- Eyes -->
+            <circle cx="395" cy="267" r="2.8" fill="rgba(229,57,53,1)"/>
+            <circle cx="405" cy="267" r="2.8" fill="rgba(229,57,53,1)"/>
+            <!-- Eye glints -->
+            <circle cx="396.2" cy="265.8" r="0.9" fill="rgba(255,255,255,0.75)"/>
+            <circle cx="406.2" cy="265.8" r="0.9" fill="rgba(255,255,255,0.75)"/>
+
+            <!-- Smile -->
+            <path d="M395,274 Q400,279 405,274" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="1.4" stroke-linecap="round"/>
+
+            <!-- Body -->
+            <rect x="391" y="287" width="18" height="13" rx="3.5" fill="rgba(229,57,53,0.08)" stroke="rgba(255,255,255,0.60)" stroke-width="1.5"/>
+            <!-- Single chest line -->
+            <line x1="394" y1="293" x2="406" y2="293" stroke="rgba(255,255,255,0.28)" stroke-width="1"/>
+          </g>
+          <text class="ai-lc" x="400" y="336" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.30)" font-family="Poppins,sans-serif" letter-spacing="2.5">YOUR BUSINESS</text>
+
+          <!-- ── INNER NODES (r=140 from center 400,280) -->
+          <!-- Right (0°): 540,280 — VOICE -->
+          <g class="ai-ni1">
+            <circle cx="540" cy="280" r="20" fill="rgba(229,57,53,0.07)" stroke="rgba(229,57,53,0.45)" stroke-width="1.5"/>
+            <circle cx="540" cy="280" r="8"  fill="rgba(229,57,53,0.9)"/>
+          </g>
+          <text class="ai-li1" x="567" y="276" font-size="9" fill="rgba(255,255,255,0.6)" font-family="Poppins,sans-serif" letter-spacing="1.5">VOICE</text>
+          <text class="ai-li1" x="567" y="289" font-size="9" fill="rgba(255,255,255,0.6)" font-family="Poppins,sans-serif" letter-spacing="1.5">AGENT</text>
+
+          <!-- Bottom-right (60°): 470,401 — TELEGRAM -->
+          <g class="ai-ni2">
+            <circle cx="470" cy="401" r="20" fill="rgba(229,57,53,0.07)" stroke="rgba(229,57,53,0.45)" stroke-width="1.5"/>
+            <circle cx="470" cy="401" r="8"  fill="rgba(229,57,53,0.9)"/>
+          </g>
+          <text class="ai-li2" x="470" y="428" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.6)" font-family="Poppins,sans-serif" letter-spacing="1.5">TELEGRAM</text>
+
+          <!-- Bottom-left (120°): 330,401 — DISCORD -->
+          <g class="ai-ni3">
+            <circle cx="330" cy="401" r="20" fill="rgba(229,57,53,0.07)" stroke="rgba(229,57,53,0.45)" stroke-width="1.5"/>
+            <circle cx="330" cy="401" r="8"  fill="rgba(229,57,53,0.9)"/>
+          </g>
+          <text class="ai-li3" x="330" y="428" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.6)" font-family="Poppins,sans-serif" letter-spacing="1.5">DISCORD</text>
+
+          <!-- Left (180°): 260,280 — FINANCE AI -->
+          <g class="ai-ni4">
+            <circle cx="260" cy="280" r="20" fill="rgba(229,57,53,0.07)" stroke="rgba(229,57,53,0.45)" stroke-width="1.5"/>
+            <circle cx="260" cy="280" r="8"  fill="rgba(229,57,53,0.9)"/>
+          </g>
+          <text class="ai-li4" x="233" y="276" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.6)" font-family="Poppins,sans-serif" letter-spacing="1.5">FINANCE</text>
+          <text class="ai-li4" x="233" y="289" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.6)" font-family="Poppins,sans-serif" letter-spacing="1.5">AI</text>
+
+          <!-- Top-left (240°): 330,159 — CONTENT -->
+          <g class="ai-ni5">
+            <circle cx="330" cy="159" r="20" fill="rgba(229,57,53,0.07)" stroke="rgba(229,57,53,0.45)" stroke-width="1.5"/>
+            <circle cx="330" cy="159" r="8"  fill="rgba(229,57,53,0.9)"/>
+          </g>
+          <text class="ai-li5" x="330" y="133" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.6)" font-family="Poppins,sans-serif" letter-spacing="1.5">CONTENT</text>
+
+          <!-- Top-right (300°): 470,159 — EMAIL AI -->
+          <g class="ai-ni6">
+            <circle cx="470" cy="159" r="20" fill="rgba(229,57,53,0.07)" stroke="rgba(229,57,53,0.45)" stroke-width="1.5"/>
+            <circle cx="470" cy="159" r="8"  fill="rgba(229,57,53,0.9)"/>
+          </g>
+          <text class="ai-li6" x="470" y="133" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.6)" font-family="Poppins,sans-serif" letter-spacing="1.5">EMAIL AI</text>
+
+          <!-- ── OUTER NODES (r=250, offset 22.5° from inner) -->
+          <!-- 337.5° → 631,184 — SLACK -->
+          <g class="ai-no1">
+            <circle cx="631" cy="184" r="15" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.20)" stroke-width="1"/>
+            <circle cx="631" cy="184" r="6"  fill="rgba(255,255,255,0.5)"/>
+          </g>
+          <text class="ai-lo1" x="651" y="181" font-size="8.5" fill="rgba(255,255,255,0.38)" font-family="Poppins,sans-serif" letter-spacing="1.2">SLACK</text>
+          <text class="ai-lo1" x="651" y="193" font-size="8.5" fill="rgba(255,255,255,0.38)" font-family="Poppins,sans-serif" letter-spacing="1.2">/ TEAMS</text>
+
+          <!-- 22.5° → 631,376 — META ADS -->
+          <g class="ai-no2">
+            <circle cx="631" cy="376" r="15" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.20)" stroke-width="1"/>
+            <circle cx="631" cy="376" r="6"  fill="rgba(255,255,255,0.5)"/>
+          </g>
+          <text class="ai-lo2" x="631" y="399" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.38)" font-family="Poppins,sans-serif" letter-spacing="1.2">META ADS</text>
+
+          <!-- 67.5° → 496,511 — CRM -->
+          <g class="ai-no3">
+            <circle cx="496" cy="511" r="15" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.20)" stroke-width="1"/>
+            <circle cx="496" cy="511" r="6"  fill="rgba(255,255,255,0.5)"/>
+          </g>
+          <text class="ai-lo3" x="496" y="534" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.38)" font-family="Poppins,sans-serif" letter-spacing="1.2">CRM</text>
+
+          <!-- 112.5° → 304,511 — INVENTORY -->
+          <g class="ai-no4">
+            <circle cx="304" cy="511" r="15" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.20)" stroke-width="1"/>
+            <circle cx="304" cy="511" r="6"  fill="rgba(255,255,255,0.5)"/>
+          </g>
+          <text class="ai-lo4" x="304" y="534" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.38)" font-family="Poppins,sans-serif" letter-spacing="1.2">INVENTORY</text>
+
+          <!-- 157.5° → 169,376 — OPENAI -->
+          <g class="ai-no5">
+            <circle cx="169" cy="376" r="15" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.20)" stroke-width="1"/>
+            <circle cx="169" cy="376" r="6"  fill="rgba(255,255,255,0.5)"/>
+          </g>
+          <text class="ai-lo5" x="148" y="373" text-anchor="end" font-size="8.5" fill="rgba(255,255,255,0.38)" font-family="Poppins,sans-serif" letter-spacing="1.2">OPEN</text>
+          <text class="ai-lo5" x="148" y="385" text-anchor="end" font-size="8.5" fill="rgba(255,255,255,0.38)" font-family="Poppins,sans-serif" letter-spacing="1.2">AI</text>
+
+          <!-- 202.5° → 169,184 — CLAUDE -->
+          <g class="ai-no6">
+            <circle cx="169" cy="184" r="15" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.20)" stroke-width="1"/>
+            <circle cx="169" cy="184" r="6"  fill="rgba(255,255,255,0.5)"/>
+          </g>
+          <text class="ai-lo6" x="148" y="181" text-anchor="end" font-size="8.5" fill="rgba(255,255,255,0.38)" font-family="Poppins,sans-serif" letter-spacing="1.2">CLAUDE</text>
+          <text class="ai-lo6" x="148" y="193" text-anchor="end" font-size="8.5" fill="rgba(255,255,255,0.38)" font-family="Poppins,sans-serif" letter-spacing="1.2">/ GPT-4o</text>
+
+          <!-- 247.5° → 304,49 — CUSTOM LLM -->
+          <g class="ai-no7">
+            <circle cx="304" cy="49" r="15" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.20)" stroke-width="1"/>
+            <circle cx="304" cy="49" r="6"  fill="rgba(255,255,255,0.5)"/>
+          </g>
+          <text class="ai-lo7" x="304" y="27" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.38)" font-family="Poppins,sans-serif" letter-spacing="1.2">CUSTOM LLM</text>
+
+          <!-- 292.5° → 496,49 — TAILSCALE -->
+          <g class="ai-no8">
+            <circle cx="496" cy="49" r="15" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.20)" stroke-width="1"/>
+            <circle cx="496" cy="49" r="6"  fill="rgba(255,255,255,0.5)"/>
+          </g>
+          <text class="ai-lo8" x="496" y="27" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,0.38)" font-family="Poppins,sans-serif" letter-spacing="1.2">TAILSCALE</text>
+
+        </svg>
+      </div>
+
+      <!-- Tags + headline — bottom-left, matching all other service pages -->
+      <div class="hero-tags">Agents &middot; Automation &middot; Intelligence</div>
+      <h1 class="hero-name" style="font-size:clamp(38px,5.5vw,90px);font-weight:700;">
+        <span class="hero-name-inner">AI that runs your<br>business while you sleep.</span>
+      </h1>
+    </div>
+
+    <!-- Marquee -->
+    <div class="marquee-wrap"><div class="marquee-track" id="marqueeTrack"></div></div>
+
+    <!-- ── SECTION 1: What We Build -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="red-label reveal">What We Build</div>
+        <div class="two-col">
+          <div>
+            <h2 class="section-headline reveal">Fully autonomous<br>AI infrastructure.</h2>
+          </div>
+          <div class="two-col-body reveal reveal-d2">
+            <p>We don't build chatbots. We build complete AI operating systems — dedicated agents that manage your inventory, reply to customers, generate content, track finances, and handle your CRM without a single human touching a keyboard.</p>
+            <p>Every system is built from scratch around your workflow, connected to the platforms you already use, and deployed on secure, private infrastructure. Your data never leaves your control.</p>
+          </div>
+        </div>
+
+        <!-- Stats row -->
+        <div class="ai-stats-row reveal reveal-d1">
+          <div class="ai-stat-block">
+            <div class="ai-stat-num"><span data-count="10" data-suffix="x">0</span></div>
+            <div class="ai-stat-label">Faster than<br>hiring in-house</div>
+          </div>
+          <div class="ai-stat-block">
+            <div class="ai-stat-num"><span data-count="24" data-suffix="/7">0</span></div>
+            <div class="ai-stat-label">Always running,<br>never sleeping</div>
+          </div>
+          <div class="ai-stat-block">
+            <div class="ai-stat-num"><span data-count="90" data-suffix="%">0</span></div>
+            <div class="ai-stat-label">Reduction in<br>manual overhead</div>
+          </div>
+          <div class="ai-stat-block">
+            <div class="ai-stat-num"><span data-count="100" data-suffix="%">0</span></div>
+            <div class="ai-stat-label">Custom built,<br>no off-the-shelf</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 2: Capabilities Grid -->
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="red-label reveal">What AI Can Do For You</div>
+        <h2 class="section-headline reveal" style="margin-bottom:8px;">One system.<br>Every function.</h2>
+        <p class="reveal reveal-d1" style="color:rgba(255,255,255,0.45);font-size:15px;max-width:520px;margin-bottom:0;">If you can describe it, we can automate it. Here's what our clients have us build:</p>
+
+        <div class="cap-grid reveal reveal-d2">
+
+          <div class="cap-card">
+            <div class="cap-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            </div>
+            <div class="cap-title">Telegram / Discord / Slack Agents</div>
+            <div class="cap-desc">Fully conversational AI bots that live inside your team chat, respond to customers, route requests, and take action — all in real time.</div>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m14 0V9a7 7 0 00-7-7 7 7 0 00-7 7v2m7 7v4m-4 0h8"/></svg>
+            </div>
+            <div class="cap-title">Voice Agents</div>
+            <div class="cap-desc">Phone-based AI that picks up calls, qualifies leads, books appointments, and handles customer service — no human needed on the line.</div>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <div class="cap-title">Inventory Management AI</div>
+            <div class="cap-desc">Monitors stock levels, triggers restocks, tracks movement, and sends alerts — all automated and connected to your existing systems.</div>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div class="cap-title">Finance & Reporting AI</div>
+            <div class="cap-desc">Tracks revenue, flags anomalies, generates weekly P&L summaries, and surfaces insights — delivered straight to your phone or inbox.</div>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </div>
+            <div class="cap-title">AI Content Creation</div>
+            <div class="cap-desc">Generates ad copy, social posts, email sequences, and product descriptions at scale — in your brand voice, on your schedule.</div>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <div class="cap-title">CRM & Lead Agents</div>
+            <div class="cap-desc">Qualifies inbound leads, updates your CRM automatically, sends follow-up sequences, and notifies your team when a deal is ready to close.</div>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <div class="cap-title">Email Automation AI</div>
+            <div class="cap-desc">Reads, categorises, and responds to inbound emails. Sends personalised outreach at scale. Handles your inbox so you don't have to.</div>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <div class="cap-title">Ad Campaign AI</div>
+            <div class="cap-desc">Monitors your Meta and Google ad performance, adjusts budgets, rewrites underperforming copy, and reports results — all autonomous.</div>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            </div>
+            <div class="cap-title">Terminal-Level Automation</div>
+            <div class="cap-desc">For technical teams: agents that live in your infrastructure, execute scripts, manage deployments, clean up repos, and handle DevOps tasks on command.</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 3: Platforms -->
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="red-label reveal">Model Agnostic</div>
+        <div class="two-col">
+          <div>
+            <h2 class="section-headline reveal">We build with<br>every LLM.</h2>
+          </div>
+          <div class="two-col-body reveal reveal-d2">
+            <p>We're not locked into any one provider. We use whichever model best fits your use case — whether that's Claude for nuanced reasoning, GPT-4 for broad capability, or a fine-tuned open-source model running on your own hardware for complete data sovereignty.</p>
+            <p>We integrate with any API, any platform, any workflow. If it has an API, we can connect to it.</p>
+            <div class="platform-grid">
+              <span class="platform-pill">Claude (Anthropic)</span>
+              <span class="platform-pill">GPT-4o (OpenAI)</span>
+              <span class="platform-pill">Gemini</span>
+              <span class="platform-pill">Llama 3</span>
+              <span class="platform-pill">Mistral</span>
+              <span class="platform-pill">Claude Code</span>
+              <span class="platform-pill">Telegram Bot API</span>
+              <span class="platform-pill">Discord API</span>
+              <span class="platform-pill">Slack API</span>
+              <span class="platform-pill">Twilio (Voice)</span>
+              <span class="platform-pill">Custom REST APIs</span>
+              <span class="platform-pill">Webhooks</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 4: Security -->
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="red-label reveal">Built Secure by Default</div>
+        <h2 class="section-headline reveal">Your data stays yours.<br>Always.</h2>
+        <p class="reveal reveal-d1" style="color:rgba(255,255,255,0.45);font-size:15px;max-width:560px;margin-bottom:0;">Every system we deploy is locked down, private, and encrypted. No third-party snooping, no shared infrastructure, no shortcuts on security.</p>
+        <div class="security-row reveal reveal-d2">
+          <div class="sec-block">
+            <div class="sec-block-icon">⚡</div>
+            <div class="sec-block-title">Tailscale Mesh VPN</div>
+            <div class="sec-block-body">All agent infrastructure sits behind a private encrypted mesh network. Zero exposed ports. Zero attack surface.</div>
+          </div>
+          <div class="sec-block">
+            <div class="sec-block-icon">🔐</div>
+            <div class="sec-block-title">Dedicated Hosting</div>
+            <div class="sec-block-body">Your agents run on dedicated VPS infrastructure — isolated from other clients. Your data is never co-mingled or shared.</div>
+          </div>
+          <div class="sec-block">
+            <div class="sec-block-icon">🛡️</div>
+            <div class="sec-block-title">End-to-End Encryption</div>
+            <div class="sec-block-body">All data in transit and at rest is encrypted. API keys and secrets are managed with hardware-level security, never stored in plain text.</div>
+          </div>
+          <div class="sec-block">
+            <div class="sec-block-icon">👁️</div>
+            <div class="sec-block-title">Full Observability</div>
+            <div class="sec-block-body">Every action your agent takes is logged. You get a real-time dashboard showing what it did, when, and why — full accountability.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 5: Process -->
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="red-label reveal">How We Work</div>
+        <div class="process-list">
+          <div class="process-item reveal">
+            <div class="process-num">01</div>
+            <div class="process-content">
+              <h3>Scope Your System</h3>
+              <p>We map out exactly what your AI needs to do — every task, every integration, every edge case. You get a full architecture document before we write a single line of code.</p>
+            </div>
+          </div>
+          <div class="process-item reveal reveal-d1">
+            <div class="process-num">02</div>
+            <div class="process-content">
+              <h3>Build the Core Agent</h3>
+              <p>We build the agent logic, connect it to your chosen LLM, and integrate it with your existing tools — CRM, Slack, email, inventory, whatever your stack looks like.</p>
+            </div>
+          </div>
+          <div class="process-item reveal reveal-d2">
+            <div class="process-num">03</div>
+            <div class="process-content">
+              <h3>Secure the Infrastructure</h3>
+              <p>We deploy on dedicated VPS infrastructure, lock it down with Tailscale, configure all secrets management, and run full security testing before anything goes live.</p>
+            </div>
+          </div>
+          <div class="process-item reveal reveal-d3">
+            <div class="process-num">04</div>
+            <div class="process-content">
+              <h3>Launch, Monitor & Scale</h3>
+              <p>We go live, hand you the dashboard, and stay on for monitoring. As your needs grow, we add new capabilities, agents, and integrations — your system scales with you.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 6: Tech Stack -->
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="red-label reveal">Tech Stack</div>
+        <div class="two-col">
+          <div><h2 class="section-headline reveal">Infrastructure<br>that never fails.</h2></div>
+          <div class="two-col-body reveal reveal-d2">
+            <p>We choose every tool in your stack deliberately — optimised for reliability, speed, and long-term maintainability. You're not inheriting someone else's bad decisions.</p>
+            <div class="tech-grid">
+              <span class="tech-pill" style="border-color:rgba(229,57,53,0.2);background:rgba(229,57,53,0.05);">Python / Node.js</span>
+              <span class="tech-pill" style="border-color:rgba(229,57,53,0.2);background:rgba(229,57,53,0.05);">Anthropic SDK</span>
+              <span class="tech-pill" style="border-color:rgba(229,57,53,0.2);background:rgba(229,57,53,0.05);">OpenAI SDK</span>
+              <span class="tech-pill" style="border-color:rgba(229,57,53,0.2);background:rgba(229,57,53,0.05);">Tailscale</span>
+              <span class="tech-pill" style="border-color:rgba(229,57,53,0.2);background:rgba(229,57,53,0.05);">Dedicated VPS</span>
+              <span class="tech-pill" style="border-color:rgba(229,57,53,0.2);background:rgba(229,57,53,0.05);">Docker</span>
+              <span class="tech-pill" style="border-color:rgba(229,57,53,0.2);background:rgba(229,57,53,0.05);">Supabase / Postgres</span>
+              <span class="tech-pill" style="border-color:rgba(229,57,53,0.2);background:rgba(229,57,53,0.05);">Webhooks / REST</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA -->
+    <div class="ai-cta-strip reveal" style="margin-bottom:80px;">
+      <div class="ai-cta-text">Ready to run on <span>AI?</span><br><span style="color:rgba(255,255,255,0.45);font-size:0.55em;font-weight:400;letter-spacing:0;">Let's scope your system in a 30-minute call.</span></div>
+      <a href="book-a-call.html" class="ai-cta-btn">
+        Book a Call
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <footer class="footer">
+      <span class="footer-copy">&copy; 2025 Momentum Agency. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="all-work.html"    class="footer-link">Work</a>
+        <a href="book-a-call.html" class="footer-link">Contact</a>
+        <a href="#"                class="footer-link">Privacy</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    // Stars
+    (function(){
+      const c = document.getElementById('star-container');
+      if(!c) return;
+      for(let i=0;i<90;i++){
+        const s=document.createElement('div');
+        s.className='star';
+        const sz=Math.random()*1.8+0.4;
+        s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--duration:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s;`;
+        c.appendChild(s);
+      }
+    })();
+
+    // Marquee
+    (function(){
+      const track = document.getElementById('marqueeTrack');
+      if(!track) return;
+      const items = ['AI Agents','Voice Automation','Telegram Bots','LLM Integration','Claude','OpenAI','24/7 Operation','Secure Infrastructure','Tailscale','CRM Automation','Content AI','Finance AI','Inventory AI','Email Agents','Discord Bots','Terminal Agents'];
+      const full = [...items,...items].map(t=>`<span class="marquee-item">${t}</span>`).join('');
+      track.innerHTML = full;
+    })();
+  </script>
+
+</body>
+</html>
