@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interfaces — Momentum</title>
+  <meta name="description" content="Digital interfaces for apps, platforms, AI tools, and stores. From concept to launch.">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .nav, .sidebar { opacity: 0; transition: opacity 0.8s ease; }
+    .nav.loaded, .sidebar.loaded { opacity: 1; }
+    #particleCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    #canvas { z-index: 2; }
+    .main-content { position: relative; z-index: 5; }
+    .interface-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.07); border-radius:12px; overflow:hidden; margin-top:40px; }
+    .interface-item { background:#000; padding:28px 24px; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); transition:background 0.2s; }
+    .interface-item:hover { background:rgba(255,255,255,0.04); }
+    .interface-item span { display:block; font-size:11px; font-weight:400; color:rgba(255,255,255,0.35); margin-top:4px; }
+    .process-flow { display:flex; gap:0; margin-top:40px; flex-wrap:wrap; }
+    .flow-step { flex:1; min-width:120px; padding:24px 20px; border-left:1px solid rgba(255,255,255,0.08); position:relative; }
+    .flow-step:first-child { border-left:none; }
+    .flow-num { font-size:11px; font-weight:700; color:rgba(255,255,255,0.25); letter-spacing:2px; margin-bottom:10px; }
+    .flow-label { font-size:15px; font-weight:600; color:rgba(255,255,255,0.9); }
+    .flow-desc { font-size:12px; color:rgba(255,255,255,0.4); margin-top:6px; line-height:1.5; }
+    @media(max-width:700px) { .interface-grid { grid-template-columns:1fr 1fr; } .process-flow { flex-direction:column; } .flow-step { border-left:none; border-top:1px solid rgba(255,255,255,0.08); } .flow-step:first-child { border-top:none; } }
+  </style>
+</head>
+<body>
+
+  <canvas id="particleCanvas"></canvas>
+  <canvas id="canvas"></canvas>
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div class="page-transition" id="pageTransition"></div>
+
+  <nav class="nav" id="mainNav">
+    <div class="nav-left">
+      <button class="nav-menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+          <line x1="0" y1="1" x2="14" y2="1" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="0" y1="9" x2="14" y2="9" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Menu
+      </button>
+    </div>
+    <a href="index.html" class="nav-logo">Momentum</a>
+    <div class="nav-right">
+      <div class="nav-location-time">
+        <span class="nav-location">NYC</span>
+        <span class="nav-time">00:00:00</span>
+      </div>
+      <a href="book-a-call.html" class="nav-email-btn" aria-label="Book a Call">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <div class="menu-overlay" id="menuOverlay" role="dialog" aria-modal="true">
+    <button class="nav-menu-btn menu-close-btn" id="menuClose" style="position:absolute;top:20px;left:24px;" aria-label="Close menu">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Close
+    </button>
+    <nav class="menu-links">
+      <a href="index.html"        class="menu-link-item"><span class="menu-link-num">01</span><span class="menu-link-text">Home</span></a>
+      <a href="meta-ads.html"     class="menu-link-item"><span class="menu-link-num">02</span><span class="menu-link-text">Meta Ads</span></a>
+      <a href="crm-systems.html"  class="menu-link-item"><span class="menu-link-num">03</span><span class="menu-link-text">CRM Systems</span></a>
+      <a href="web-design.html"   class="menu-link-item"><span class="menu-link-num">04</span><span class="menu-link-text">Web Design</span></a>
+      <a href="interfaces.html"   class="menu-link-item"><span class="menu-link-num">05</span><span class="menu-link-text">Interfaces</span></a>
+      <a href="all-work.html"     class="menu-link-item"><span class="menu-link-num">06</span><span class="menu-link-text">All Work</span></a>
+      <a href="book-a-call.html"  class="menu-link-item"><span class="menu-link-num">07</span><span class="menu-link-text">Book a Call</span></a>
+    </nav>
+    <div class="menu-footer">
+      <div class="menu-footer-col"><span class="menu-footer-label">Email</span><span class="menu-footer-val">hello@momentum.agency</span></div>
+      <div class="menu-footer-col"><span class="menu-footer-label">Social</span><span class="menu-footer-val">@momentum.agency</span></div>
+      <div class="menu-footer-col"><span class="menu-footer-label">Based</span><span class="menu-footer-val">New York City</span></div>
+    </div>
+  </div>
+
+  <aside class="sidebar" id="mainSidebar">
+    <a href="meta-ads.html"    class="sidebar-item">Meta Ads</a>
+    <a href="crm-systems.html" class="sidebar-item">CRM Systems</a>
+    <a href="web-design.html"  class="sidebar-item">Web Design</a>
+    <a href="interfaces.html"  class="sidebar-item active">Interfaces</a>
+    <a href="all-work.html"    class="sidebar-item">All Work</a>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="page-hero">
+      <div class="hero-bg" style="background:linear-gradient(135deg,#000c1a 0%,#001428 50%,#000508 100%);"></div>
+      <div class="hero-visual" style="width:30vw;max-width:340px;">
+        <svg viewBox="0 0 300 560" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="20" width="260" height="520" rx="36" fill="none" stroke="rgba(60,140,255,0.38)" stroke-width="2"/>
+          <rect x="28" y="58" width="244" height="444" rx="28" fill="rgba(60,140,255,0.03)" stroke="rgba(60,140,255,0.16)" stroke-width="1"/>
+          <rect x="118" y="32" width="64" height="16" rx="8" fill="rgba(60,140,255,0.38)"/>
+          <rect x="40"  y="108" width="220" height="92" rx="12" fill="rgba(60,140,255,0.07)" stroke="rgba(60,140,255,0.2)" stroke-width="1"/>
+          <rect x="56"  y="126" width="72"  height="8"  rx="2" fill="rgba(60,140,255,0.48)"/>
+          <rect x="56"  y="142" width="52"  height="6"  rx="2" fill="rgba(60,140,255,0.24)"/>
+          <rect x="56"  y="158" width="38"  height="20" rx="10" fill="rgba(60,140,255,0.40)"/>
+          <rect x="40"  y="216" width="104" height="104" rx="14" fill="rgba(60,140,255,0.05)" stroke="rgba(60,140,255,0.18)" stroke-width="1"/>
+          <rect x="156" y="216" width="104" height="104" rx="14" fill="rgba(60,140,255,0.05)" stroke="rgba(60,140,255,0.18)" stroke-width="1"/>
+          <rect x="52"  y="234" width="52"  height="6"  rx="2" fill="rgba(60,140,255,0.32)"/>
+          <rect x="52"  y="248" width="38"  height="5"  rx="2" fill="rgba(60,140,255,0.18)"/>
+          <rect x="168" y="234" width="52"  height="6"  rx="2" fill="rgba(60,140,255,0.32)"/>
+          <rect x="168" y="248" width="38"  height="5"  rx="2" fill="rgba(60,140,255,0.18)"/>
+          <rect x="40"  y="336" width="220" height="10" rx="3" fill="rgba(60,140,255,0.20)"/>
+          <rect x="40"  y="354" width="160" height="8"  rx="3" fill="rgba(60,140,255,0.13)"/>
+          <rect x="40"  y="370" width="180" height="8"  rx="3" fill="rgba(60,140,255,0.10)"/>
+          <line x1="28" y1="442" x2="272" y2="442" stroke="rgba(60,140,255,0.18)" stroke-width="1"/>
+          <circle cx="100" cy="462" r="6" fill="rgba(60,140,255,0.52)"/>
+          <circle cx="150" cy="462" r="6" fill="rgba(60,140,255,0.20)"/>
+          <circle cx="200" cy="462" r="6" fill="rgba(60,140,255,0.20)"/>
+        </svg>
+      </div>
+      <p class="hero-desc">Digital interfaces that feel inevitable. Component systems built for scale and delight.</p>
+      <div class="hero-tags">UI Design · UX · Interaction</div>
+      <h1 class="hero-name" style="font-size:clamp(42px,6vw,100px);font-style:normal;font-weight:700;">
+        <span class="hero-name-inner">Interfaces That<br>Feel Like the Future.</span>
+      </h1>
+    </div>
+
+    <div class="marquee-wrap"><div class="marquee-track" id="marqueeTrack"></div></div>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-label reveal">What We Do</div>
+        <div class="two-col">
+          <div><h2 class="section-headline reveal">Design and build<br>any interface.</h2></div>
+          <div class="two-col-body reveal reveal-d2">
+            <p>We design and build digital interfaces for apps, platforms, AI tools, and stores. From concept to launch, we handle the full design and development of any interface — whether it's a mobile app, a SaaS dashboard, or a game UI.</p>
+            <p>Every interface we build starts with a deep understanding of the user and the goal. We design systems, not screens — because great interfaces scale.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:0 5vw 100px;position:relative;z-index:5;background:#000;">
+      <div class="stats-row reveal">
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="30" data-suffix="+">0</span></div>
+          <div class="stat-label">Interfaces<br>shipped</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="100" data-suffix="%">0%</span></div>
+          <div class="stat-label">App Store<br>ready builds</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="100" data-suffix="%">0%</span></div>
+          <div class="stat-label">AI-native<br>design systems</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="section-label reveal">What We Build</div>
+        <h2 class="section-headline reveal" style="margin-bottom:8px;">Every type of interface.</h2>
+        <p class="reveal reveal-d1" style="color:rgba(255,255,255,0.5);font-size:15px;max-width:500px;margin-bottom:0;">From native mobile apps to AI agent dashboards to App Store ready games.</p>
+        <div class="interface-grid reveal reveal-d2">
+          <div class="interface-item">Mobile App UI/UX<span>iOS &amp; Android native + cross-platform</span></div>
+          <div class="interface-item">AI Agent Dashboards<span>Real-time data + agent interaction layers</span></div>
+          <div class="interface-item">Shopify Interfaces<span>Custom storefront + product experiences</span></div>
+          <div class="interface-item">Client Portals<span>Secure, branded client-facing dashboards</span></div>
+          <div class="interface-item">Admin Panels<span>Custom operations and management UIs</span></div>
+          <div class="interface-item">Data Visualizations<span>Interactive charts, maps, and analytics</span></div>
+          <div class="interface-item">Game Interfaces<span>App Store ready game UI systems</span></div>
+          <div class="interface-item">SaaS Platforms<span>Full product UI from onboarding to core loop</span></div>
+          <div class="interface-item">Design Systems<span>Component libraries built to scale</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="section-label reveal">Our Process</div>
+        <h2 class="section-headline reveal" style="margin-bottom:40px;">From brief to launch.</h2>
+        <div class="process-flow reveal reveal-d1">
+          <div class="flow-step">
+            <div class="flow-num">01</div>
+            <div class="flow-label">Research</div>
+            <div class="flow-desc">User interviews, competitor analysis, and goal mapping.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">02</div>
+            <div class="flow-label">Wireframe</div>
+            <div class="flow-desc">Low-fidelity flows and information architecture.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">03</div>
+            <div class="flow-label">Design System</div>
+            <div class="flow-desc">Tokens, components, and patterns built to scale.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">04</div>
+            <div class="flow-label">Build</div>
+            <div class="flow-desc">Pixel-perfect implementation in code or Figma handoff.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">05</div>
+            <div class="flow-label">Test</div>
+            <div class="flow-desc">User testing, QA, and iteration before launch.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">06</div>
+            <div class="flow-label">Launch</div>
+            <div class="flow-desc">Ship it. Support, monitor, and iterate post-launch.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta-strip reveal">
+      <div class="cta-strip-text">Ready to build your interface?</div>
+      <a href="book-a-call.html" class="cta-btn"><span>Book a Call &rarr;</span></a>
+    </div>
+
+    <footer class="footer">
+      <span class="footer-copy">&copy; 2025 Momentum Agency. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="all-work.html"    class="footer-link">Work</a>
+        <a href="book-a-call.html" class="footer-link">Contact</a>
+        <a href="#"                class="footer-link">Privacy</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    /* ── Particle Background ── */
+    (function () {
+      var c = document.getElementById('particleCanvas');
+      var ctx = c.getContext('2d');
+      var W, H, particles = [], mouse = { x: -1000, y: -1000 };
+      var COUNT = 80;
+
+      function resize() {
+        W = c.width  = window.innerWidth;
+        H = c.height = window.innerHeight;
+      }
+
+      function Particle() {
+        this.reset();
+      }
+      Particle.prototype.reset = function () {
+        this.x  = Math.random() * W;
+        this.y  = Math.random() * H;
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
+        this.r  = Math.random() * 1.5 + 0.5;
+        this.a  = Math.random() * 0.35 + 0.05;
+      };
+
+      function init() {
+        resize();
+        particles = [];
+        for (var i = 0; i < COUNT; i++) particles.push(new Particle());
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          var dx = mouse.x - p.x, dy = mouse.y - p.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            p.vx -= dx / dist * 0.06;
+            p.vy -= dy / dist * 0.06;
+          }
+          p.vx *= 0.98; p.vy *= 0.98;
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > W || p.y < 0 || p.y > H) p.reset();
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,' + p.a + ')';
+          ctx.fill();
+
+          for (var j = i + 1; j < particles.length; j++) {
+            var q = particles[j];
+            var ex = p.x - q.x, ey = p.y - q.y;
+            var ed = Math.sqrt(ex * ex + ey * ey);
+            if (ed < 100) {
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(q.x, q.y);
+              ctx.strokeStyle = 'rgba(255,255,255,' + (0.07 * (1 - ed / 100)) + ')';
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+
+      document.addEventListener('mousemove', function (e) {
+        mouse.x = e.clientX; mouse.y = e.clientY;
+      });
+      window.addEventListener('resize', resize);
+      init();
+      draw();
+    })();
+  </script>
+  <script type="module">
+    import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js";
+    TubesCursor(document.getElementById('canvas'), {
+      tubes: {
+        count: 3, radius: 0.009, length: 0.15,
+        colors: ["#ffffff", "#111111", "#1a0033"],
+        lights: { intensity: 156, colors: ["#ffffff", "#ccccff", "#0d0026", "#ffffff"] }
+      }
+    });
+  </script>
+  <script>
+    buildMarquee('marqueeTrack', ['Interfaces','UI Design','UX','Mobile Apps','AI Dashboards','Shopify','Design Systems','App Store','Game UI','Component Libraries']);
+    setTimeout(function () {
+      document.getElementById('mainNav').classList.add('loaded');
+      document.getElementById('mainSidebar').classList.add('loaded');
+    }, 500);
+  </script>
+</body>
+</html>

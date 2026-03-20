@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a Call — Momentum</title>
+  <meta name="description" content="Drop us a line. We respond within 24 hours with a free audit of your current growth stack.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div class="page-transition" id="pageTransition"></div>
+
+  <!-- Nav -->
+  <nav class="nav" id="mainNav">
+    <div class="nav-left">
+      <button class="nav-menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+          <line x1="0" y1="1" x2="14" y2="1" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="0" y1="9" x2="14" y2="9" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Menu
+      </button>
+    </div>
+    <a href="index.html" class="nav-logo">Momentum</a>
+    <div class="nav-right">
+      <div class="nav-location-time">
+        <span class="nav-location">NYC</span>
+        <span class="nav-time">00:00:00</span>
+      </div>
+      <a href="book-a-call.html" class="nav-email-btn" aria-label="Book a Call">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Menu Overlay -->
+  <div class="menu-overlay" id="menuOverlay" role="dialog" aria-modal="true">
+    <button class="nav-menu-btn menu-close-btn" id="menuClose" style="position:absolute;top:20px;left:24px;" aria-label="Close menu">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Close
+    </button>
+    <nav class="menu-links">
+      <a href="index.html"        class="menu-link-item"><span class="menu-link-num">01</span><span class="menu-link-text">Home</span></a>
+      <a href="meta-ads.html"     class="menu-link-item"><span class="menu-link-num">02</span><span class="menu-link-text">Meta Ads</span></a>
+      <a href="crm-systems.html"  class="menu-link-item"><span class="menu-link-num">03</span><span class="menu-link-text">CRM Systems</span></a>
+      <a href="web-design.html"   class="menu-link-item"><span class="menu-link-num">04</span><span class="menu-link-text">Web Design</span></a>
+      <a href="interfaces.html"   class="menu-link-item"><span class="menu-link-num">05</span><span class="menu-link-text">Interfaces</span></a>
+      <a href="all-work.html"     class="menu-link-item"><span class="menu-link-num">06</span><span class="menu-link-text">All Work</span></a>
+      <a href="book-a-call.html"  class="menu-link-item"><span class="menu-link-num">07</span><span class="menu-link-text">Book a Call</span></a>
+    </nav>
+    <div class="menu-footer">
+      <div class="menu-footer-col">
+        <span class="menu-footer-label">Email</span>
+        <span class="menu-footer-val">hello@momentum.agency</span>
+      </div>
+      <div class="menu-footer-col">
+        <span class="menu-footer-label">Social</span>
+        <span class="menu-footer-val">@momentum.agency</span>
+      </div>
+      <div class="menu-footer-col">
+        <span class="menu-footer-label">Based</span>
+        <span class="menu-footer-val">New York City</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- No sidebar on this page -->
+
+  <main class="main-content">
+
+    <!-- Intro Section -->
+    <section class="section" style="padding-top:calc(72px + 80px);">
+      <div class="section-inner">
+        <div class="section-label reveal">Book a Call</div>
+        <h1 class="section-headline reveal" style="font-size:clamp(52px,7vw,100px);line-height:0.95;margin-bottom:28px;">Let's build something.</h1>
+        <p class="reveal reveal-d1" style="font-size:15px;line-height:1.65;color:rgba(255,255,255,0.5);max-width:480px;margin-bottom:80px;">Drop us a line — we respond within 24 hours with a free audit of your current growth stack.</p>
+
+        <!-- Contact Form -->
+        <form class="contact-form" novalidate>
+          <div class="form-grid">
+
+            <div class="form-field reveal">
+              <label for="first-name">First Name</label>
+              <input type="text" id="first-name" name="first_name" placeholder="Alex" autocomplete="given-name"/>
+            </div>
+
+            <div class="form-field reveal reveal-d1">
+              <label for="last-name">Last Name</label>
+              <input type="text" id="last-name" name="last_name" placeholder="Johnson" autocomplete="family-name"/>
+            </div>
+
+            <div class="form-field reveal">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="alex@company.com" autocomplete="email"/>
+            </div>
+
+            <div class="form-field reveal reveal-d1">
+              <label for="company">Company</label>
+              <input type="text" id="company" name="company" placeholder="Acme Inc." autocomplete="organization"/>
+            </div>
+
+            <div class="form-field reveal">
+              <label for="service">Service of Interest</label>
+              <select id="service" name="service">
+                <option value="" disabled selected>Choose a Service</option>
+                <option value="meta-ads">Meta Ads</option>
+                <option value="crm-systems">CRM Systems</option>
+                <option value="web-design">Web Design</option>
+                <option value="interfaces">Interfaces</option>
+                <option value="full-suite">Full Suite</option>
+              </select>
+            </div>
+
+            <div class="form-field reveal reveal-d1">
+              <label for="budget">Monthly Budget</label>
+              <select id="budget" name="budget">
+                <option value="" disabled selected>Choose a Budget</option>
+                <option value="1k-3k">$1k–$3k</option>
+                <option value="3k-10k">$3k–$10k</option>
+                <option value="10k-25k">$10k–$25k</option>
+                <option value="25k-plus">$25k+</option>
+              </select>
+            </div>
+
+            <div class="form-field full reveal">
+              <label for="description">Project Description</label>
+              <textarea id="description" name="description" placeholder="Tell us what you're working on, where you're at, and what outcome you're after."></textarea>
+            </div>
+
+          </div>
+          <div class="form-submit-row reveal">
+            <button type="submit" class="form-submit-btn cta-btn"><span>Send Message &rarr;</span></button>
+            <span class="form-note">We respond within 24 hours.</span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Contact Info -->
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="section-label reveal">Contact</div>
+        <div class="contact-info reveal">
+          <div class="contact-info-col">
+            <div class="contact-info-label">Email</div>
+            <div class="contact-info-val">
+              <a href="mailto:hello@momentum.agency" style="color:inherit;">hello@momentum.agency</a>
+            </div>
+          </div>
+          <div class="contact-info-col">
+            <div class="contact-info-label">Follow</div>
+            <div class="contact-info-val">
+              @momentum.agency<br>on Instagram + LinkedIn
+            </div>
+          </div>
+          <div class="contact-info-col">
+            <div class="contact-info-label">Based</div>
+            <div class="contact-info-val">
+              New York City,<br>working globally
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-strip reveal">
+      <div class="cta-strip-text">Not ready to commit? No problem.</div>
+      <a href="all-work.html" class="cta-btn"><span>Explore our work &rarr;</span></a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="footer-copy">&copy; 2025 Momentum Agency. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="all-work.html"    class="footer-link">Work</a>
+        <a href="book-a-call.html" class="footer-link">Contact</a>
+        <a href="#"                class="footer-link">Privacy</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    buildMarquee('marqueeTrack', ['Book a Call','Free Audit','24 Hour Response','hello@momentum.agency','New York City','Global Clients','Get In Touch','Start Growing']);
+  </script>
+</body>
+</html>

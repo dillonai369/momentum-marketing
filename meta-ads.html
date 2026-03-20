@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meta Ads — Momentum</title>
+  <meta name="description" content="Full-service Meta Ads campaigns on Facebook and Instagram. We find your audience and scale your revenue.">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .nav, .sidebar { opacity: 0; transition: opacity 0.8s ease; }
+    .nav.loaded, .sidebar.loaded { opacity: 1; }
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .tag-pill {
+      padding: 8px 18px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 100px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.04);
+    }
+    .integration-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 40px;
+    }
+    .integration-item {
+      background: #000;
+      padding: 28px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.8);
+      transition: background 0.2s;
+    }
+    .integration-item:hover { background: rgba(255,255,255,0.04); }
+    .integration-item span {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.35);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="canvas"></canvas>
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div class="page-transition" id="pageTransition"></div>
+
+  <!-- Nav -->
+  <nav class="nav" id="mainNav">
+    <div class="nav-left">
+      <button class="nav-menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+          <line x1="0" y1="1" x2="14" y2="1" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="0" y1="9" x2="14" y2="9" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Menu
+      </button>
+    </div>
+    <a href="index.html" class="nav-logo">Momentum</a>
+    <div class="nav-right">
+      <div class="nav-location-time">
+        <span class="nav-location">NYC</span>
+        <span class="nav-time">00:00:00</span>
+      </div>
+      <a href="book-a-call.html" class="nav-email-btn" aria-label="Book a Call">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Menu Overlay -->
+  <div class="menu-overlay" id="menuOverlay" role="dialog" aria-modal="true">
+    <button class="nav-menu-btn menu-close-btn" id="menuClose" style="position:absolute;top:20px;left:24px;" aria-label="Close menu">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Close
+    </button>
+    <nav class="menu-links">
+      <a href="index.html"        class="menu-link-item"><span class="menu-link-num">01</span><span class="menu-link-text">Home</span></a>
+      <a href="meta-ads.html"     class="menu-link-item"><span class="menu-link-num">02</span><span class="menu-link-text">Meta Ads</span></a>
+      <a href="crm-systems.html"  class="menu-link-item"><span class="menu-link-num">03</span><span class="menu-link-text">CRM Systems</span></a>
+      <a href="web-design.html"   class="menu-link-item"><span class="menu-link-num">04</span><span class="menu-link-text">Web Design</span></a>
+      <a href="interfaces.html"   class="menu-link-item"><span class="menu-link-num">05</span><span class="menu-link-text">Interfaces</span></a>
+      <a href="all-work.html"     class="menu-link-item"><span class="menu-link-num">06</span><span class="menu-link-text">All Work</span></a>
+      <a href="book-a-call.html"  class="menu-link-item"><span class="menu-link-num">07</span><span class="menu-link-text">Book a Call</span></a>
+    </nav>
+    <div class="menu-footer">
+      <div class="menu-footer-col">
+        <span class="menu-footer-label">Email</span>
+        <span class="menu-footer-val">hello@momentum.agency</span>
+      </div>
+      <div class="menu-footer-col">
+        <span class="menu-footer-label">Social</span>
+        <span class="menu-footer-val">@momentum.agency</span>
+      </div>
+      <div class="menu-footer-col">
+        <span class="menu-footer-label">Based</span>
+        <span class="menu-footer-val">New York City</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar" id="mainSidebar">
+    <a href="meta-ads.html"    class="sidebar-item active">Meta Ads</a>
+    <a href="crm-systems.html" class="sidebar-item">CRM Systems</a>
+    <a href="web-design.html"  class="sidebar-item">Web Design</a>
+    <a href="interfaces.html"  class="sidebar-item">Interfaces</a>
+    <a href="all-work.html"    class="sidebar-item">All Work</a>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- Hero -->
+    <div class="page-hero">
+      <div class="hero-bg" style="background:linear-gradient(135deg,#020818 0%,#050e2e 40%,#01040f 100%);"></div>
+      <div class="hero-visual">
+        <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="300" cy="200" r="200" fill="none" stroke="rgba(80,120,255,0.10)" stroke-width="1"/>
+          <circle cx="300" cy="200" r="150" fill="none" stroke="rgba(80,120,255,0.15)" stroke-width="1"/>
+          <circle cx="300" cy="200" r="100" fill="none" stroke="rgba(80,120,255,0.22)" stroke-width="1.5"/>
+          <circle cx="300" cy="200" r="55"  fill="none" stroke="rgba(80,120,255,0.35)" stroke-width="1.5"/>
+          <circle cx="300" cy="200" r="18"  fill="rgba(80,120,255,0.55)"/>
+          <line x1="300" y1="0"   x2="300" y2="50"  stroke="rgba(80,120,255,0.18)" stroke-width="1"/>
+          <line x1="300" y1="350" x2="300" y2="400" stroke="rgba(80,120,255,0.18)" stroke-width="1"/>
+          <line x1="100" y1="200" x2="150" y2="200" stroke="rgba(80,120,255,0.18)" stroke-width="1"/>
+          <line x1="450" y1="200" x2="500" y2="200" stroke="rgba(80,120,255,0.18)" stroke-width="1"/>
+          <polyline points="40,420 130,355 215,305 300,250 388,192 472,148 560,92" fill="none" stroke="rgba(100,160,255,0.65)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="130" cy="355" r="5" fill="rgba(100,160,255,0.95)"/>
+          <circle cx="215" cy="305" r="5" fill="rgba(100,160,255,0.95)"/>
+          <circle cx="300" cy="250" r="5" fill="rgba(100,160,255,0.95)"/>
+          <circle cx="388" cy="192" r="5" fill="rgba(100,160,255,0.95)"/>
+          <circle cx="472" cy="148" r="5" fill="rgba(100,160,255,0.95)"/>
+        </svg>
+      </div>
+      <p class="hero-desc">Full-service Meta Ads on Facebook &amp; Instagram. We identify your exact audience and scale what converts.</p>
+      <div class="hero-tags">Paid Media · Growth · ROAS</div>
+      <h1 class="hero-name" style="font-size:clamp(42px,6vw,100px);font-style:normal;font-weight:700;">
+        <span class="hero-name-inner">We Find Your Audience.<br>We Scale Your Revenue.</span>
+      </h1>
+    </div>
+
+    <!-- Marquee -->
+    <div class="marquee-wrap"><div class="marquee-track" id="marqueeTrack"></div></div>
+
+    <!-- What We Do -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-label reveal">What We Do</div>
+        <div class="two-col">
+          <div>
+            <h2 class="section-headline reveal">Full-service campaigns.<br>Real results.</h2>
+          </div>
+          <div class="two-col-body reveal reveal-d2">
+            <p>We run full-service Meta Ads campaigns on Facebook and Instagram. We identify your exact target audience, build custom campaigns, create ads using real filmography and AI-generated content, and scale what works.</p>
+            <p>Every dollar is tracked. Every creative is tested. Every audience is engineered. We don't guess — we build systems that find your customers before they even know they need you.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section style="padding:0 5vw 100px;position:relative;z-index:5;background:#000;">
+      <div class="stats-row reveal">
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="340" data-suffix="%">0%</span></div>
+          <div class="stat-label">Average ROAS improvement<br>across all campaigns</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">$<span data-count="2" data-suffix="M+">0</span></div>
+          <div class="stat-label">Ad spend managed<br>and optimised</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="94" data-suffix="%">0%</span></div>
+          <div class="stat-label">Client retention<br>rate</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="200" data-suffix="+">0</span></div>
+          <div class="stat-label">Campaigns<br>launched</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Our Process -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-label reveal">Our Process</div>
+        <div class="process-list">
+          <div class="process-item reveal">
+            <div class="process-num">01</div>
+            <div class="process-content">
+              <h3>Discovery</h3>
+              <p>We understand your goals, budget, and target customer. We audit your existing accounts, pixel data, and funnel to find every gap and opportunity.</p>
+            </div>
+          </div>
+          <div class="process-item reveal reveal-d1">
+            <div class="process-num">02</div>
+            <div class="process-content">
+              <h3>Creative</h3>
+              <p>We produce real-life filmed ad creatives and AI-generated content — hooks, visuals, copy, and formats tested against your audience.</p>
+            </div>
+          </div>
+          <div class="process-item reveal reveal-d2">
+            <div class="process-num">03</div>
+            <div class="process-content">
+              <h3>Launch</h3>
+              <p>We build your personalised campaign architecture and custom audience segments. Campaigns go live with structured A/B frameworks from day one.</p>
+            </div>
+          </div>
+          <div class="process-item reveal reveal-d3">
+            <div class="process-num">04</div>
+            <div class="process-content">
+              <h3>Scale</h3>
+              <p>We optimize ROAS, lower cost per click, and push spend into winning ads. Budget scales with performance — not guesswork.</p>
+            </div>
+          </div>
+          <div class="process-item reveal reveal-d4">
+            <div class="process-num">05</div>
+            <div class="process-content">
+              <h3>Nurture</h3>
+              <p>We connect campaigns to fully built funnels that handle every lead automatically — from first click to closed deal, no manual follow-up needed.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Integrations -->
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="section-label reveal">Integrations</div>
+        <div class="two-col">
+          <div>
+            <h2 class="section-headline reveal">Every lead.<br>Automatically handled.</h2>
+          </div>
+          <div class="two-col-body reveal reveal-d2">
+            <p>We connect your campaigns to your CRM so every lead is captured, delegated, and followed up automatically — no one falls through the cracks.</p>
+            <p>From GoHighLevel to Salesforce, we integrate with whatever system your business runs on via webhook, API, or native connector.</p>
+          </div>
+        </div>
+        <div class="integration-grid reveal">
+          <div class="integration-item">GoHighLevel<span>Full pipeline + automation</span></div>
+          <div class="integration-item">Kicksite<span>Gym &amp; martial arts CRM</span></div>
+          <div class="integration-item">HubSpot<span>Marketing + sales hub</span></div>
+          <div class="integration-item">Salesforce<span>Enterprise CRM</span></div>
+          <div class="integration-item">Google Sheets<span>Lightweight data routing</span></div>
+          <div class="integration-item">Custom Webhook<span>Any system via API</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-strip reveal">
+      <div class="cta-strip-text">Ready to scale your ads?</div>
+      <a href="book-a-call.html" class="cta-btn"><span>Book a Call &rarr;</span></a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="footer-copy">&copy; 2025 Momentum Agency. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="all-work.html"    class="footer-link">Work</a>
+        <a href="book-a-call.html" class="footer-link">Contact</a>
+        <a href="#"                class="footer-link">Privacy</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+  <script type="module">
+    import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js";
+    TubesCursor(document.getElementById('canvas'), {
+      tubes: {
+        count: 3,
+        radius: 0.009,
+        length: 0.15,
+        colors: ["#ffffff", "#111111", "#1a0033"],
+        lights: {
+          intensity: 156,
+          colors: ["#ffffff", "#ccccff", "#0d0026", "#ffffff"]
+        }
+      }
+    });
+  </script>
+  <script>
+    buildMarquee('marqueeTrack', ['Meta Ads','ROAS Engineering','Paid Media','Full-Funnel Growth','Creative Testing','Audience Architecture','Facebook Ads','Instagram Ads','Performance Media']);
+    setTimeout(function () {
+      document.getElementById('mainNav').classList.add('loaded');
+      document.getElementById('mainSidebar').classList.add('loaded');
+    }, 500);
+  </script>
+</body>
+</html>

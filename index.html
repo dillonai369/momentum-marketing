@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Momentum — We Drive Results</title>
+  <meta name="description" content="Premium growth agency — Meta Ads, CRM Systems, Web Design, Interfaces.">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .nav, .sidebar { opacity: 0; transition: opacity 0.8s ease; }
+    .nav.loaded, .sidebar.loaded { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <canvas id="canvas"></canvas>
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div class="page-transition" id="pageTransition"></div>
+
+  <!-- Nav -->
+  <nav class="nav" id="mainNav">
+    <div class="nav-left">
+      <button class="nav-menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+          <line x1="0" y1="1" x2="14" y2="1" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="0" y1="9" x2="14" y2="9" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Menu
+      </button>
+    </div>
+    <a href="index.html" class="nav-logo">Momentum</a>
+    <div class="nav-right">
+      <div class="nav-location-time">
+        <span class="nav-location">NYC</span>
+        <span class="nav-time">00:00:00</span>
+      </div>
+      <a href="book-a-call.html" class="nav-email-btn" aria-label="Book a Call">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Menu Overlay -->
+  <div class="menu-overlay" id="menuOverlay" role="dialog" aria-modal="true">
+    <button class="nav-menu-btn menu-close-btn" id="menuClose" style="position:absolute;top:20px;left:24px;" aria-label="Close menu">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Close
+    </button>
+    <nav class="menu-links">
+      <a href="index.html"        class="menu-link-item"><span class="menu-link-num">01</span><span class="menu-link-text">Home</span></a>
+      <a href="meta-ads.html"     class="menu-link-item"><span class="menu-link-num">02</span><span class="menu-link-text">Meta Ads</span></a>
+      <a href="crm-systems.html"  class="menu-link-item"><span class="menu-link-num">03</span><span class="menu-link-text">CRM Systems</span></a>
+      <a href="web-design.html"   class="menu-link-item"><span class="menu-link-num">04</span><span class="menu-link-text">Web Design</span></a>
+      <a href="interfaces.html"   class="menu-link-item"><span class="menu-link-num">05</span><span class="menu-link-text">Interfaces</span></a>
+      <a href="all-work.html"     class="menu-link-item"><span class="menu-link-num">06</span><span class="menu-link-text">All Work</span></a>
+      <a href="book-a-call.html"  class="menu-link-item"><span class="menu-link-num">07</span><span class="menu-link-text">Book a Call</span></a>
+    </nav>
+    <div class="menu-footer">
+      <div class="menu-footer-col">
+        <span class="menu-footer-label">Email</span>
+        <span class="menu-footer-val">hello@momentum.agency</span>
+      </div>
+      <div class="menu-footer-col">
+        <span class="menu-footer-label">Social</span>
+        <span class="menu-footer-val">@momentum.agency</span>
+      </div>
+      <div class="menu-footer-col">
+        <span class="menu-footer-label">Based</span>
+        <span class="menu-footer-val">New York City</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar" id="mainSidebar">
+    <a href="meta-ads.html"    class="sidebar-item" data-preview="meta-ads">Meta Ads</a>
+    <a href="crm-systems.html" class="sidebar-item" data-preview="crm-systems">CRM Systems</a>
+    <a href="web-design.html"  class="sidebar-item" data-preview="web-design">Web Design</a>
+    <a href="interfaces.html"  class="sidebar-item" data-preview="interfaces">Interfaces</a>
+    <a href="all-work.html"    class="sidebar-item">All Work</a>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- Hero Area — 100vh, preview states -->
+    <div class="hero-area" id="heroArea">
+
+      <!-- State: Home (default) -->
+      <div class="preview-state active" id="state-home">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0 5vw;text-align:center;">
+          <h1 class="home-headline">
+            <span class="hl-line"><span>We drive</span></span>
+            <span class="hl-line"><span>results.</span></span>
+          </h1>
+          <p class="home-sub" style="text-align:center;margin:0 auto;">Since 2024, we've helped ambitious brands dominate their market through AI-powered marketing, custom websites, and automated CRM systems.</p>
+        </div>
+        <div class="home-scroll"><div class="home-scroll-bar"></div>Scroll</div>
+      </div>
+
+      <!-- State: Meta Ads -->
+      <div class="preview-state" id="state-meta-ads">
+        <div class="service-preview-bg" style="background:linear-gradient(135deg,#020818 0%,#050e2e 40%,#01040f 100%);"></div>
+        <div class="service-preview-visual">
+          <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="300" cy="200" r="200" fill="none" stroke="rgba(80,120,255,0.10)" stroke-width="1"/>
+            <circle cx="300" cy="200" r="150" fill="none" stroke="rgba(80,120,255,0.15)" stroke-width="1"/>
+            <circle cx="300" cy="200" r="100" fill="none" stroke="rgba(80,120,255,0.22)" stroke-width="1.5"/>
+            <circle cx="300" cy="200" r="55"  fill="none" stroke="rgba(80,120,255,0.35)" stroke-width="1.5"/>
+            <circle cx="300" cy="200" r="18"  fill="rgba(80,120,255,0.55)"/>
+            <line x1="300" y1="0"   x2="300" y2="50"  stroke="rgba(80,120,255,0.18)" stroke-width="1"/>
+            <line x1="300" y1="350" x2="300" y2="400" stroke="rgba(80,120,255,0.18)" stroke-width="1"/>
+            <line x1="100" y1="200" x2="150" y2="200" stroke="rgba(80,120,255,0.18)" stroke-width="1"/>
+            <line x1="450" y1="200" x2="500" y2="200" stroke="rgba(80,120,255,0.18)" stroke-width="1"/>
+            <polyline points="40,420 130,355 215,305 300,250 388,192 472,148 560,92" fill="none" stroke="rgba(100,160,255,0.65)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="130" cy="355" r="5" fill="rgba(100,160,255,0.95)"/>
+            <circle cx="215" cy="305" r="5" fill="rgba(100,160,255,0.95)"/>
+            <circle cx="300" cy="250" r="5" fill="rgba(100,160,255,0.95)"/>
+            <circle cx="388" cy="192" r="5" fill="rgba(100,160,255,0.95)"/>
+            <circle cx="472" cy="148" r="5" fill="rgba(100,160,255,0.95)"/>
+          </svg>
+        </div>
+        <p class="service-preview-desc">Full-funnel Meta advertising engineered for ROAS. We build acquisition systems, not campaigns.</p>
+        <div class="service-preview-category">Paid Media · Growth</div>
+        <h2 class="service-preview-name">Meta Ads</h2>
+      </div>
+
+      <!-- State: CRM Systems -->
+      <div class="preview-state" id="state-crm-systems">
+        <div class="service-preview-bg" style="background:linear-gradient(135deg,#08020f 0%,#150a28 50%,#060010 100%);"></div>
+        <div class="service-preview-visual">
+          <svg viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg">
+            <line x1="60"  y1="175" x2="162" y2="175" stroke="rgba(160,80,255,0.4)" stroke-width="1.5" stroke-dasharray="6,4"/>
+            <line x1="218" y1="175" x2="322" y2="175" stroke="rgba(160,80,255,0.4)" stroke-width="1.5" stroke-dasharray="6,4"/>
+            <line x1="378" y1="175" x2="462" y2="175" stroke="rgba(160,80,255,0.4)" stroke-width="1.5" stroke-dasharray="6,4"/>
+            <line x1="518" y1="175" x2="560" y2="175" stroke="rgba(160,80,255,0.4)" stroke-width="1.5" stroke-dasharray="6,4"/>
+            <circle cx="190" cy="175" r="28" fill="none" stroke="rgba(160,80,255,0.6)" stroke-width="1.5"/>
+            <circle cx="190" cy="175" r="12" fill="rgba(160,80,255,0.38)"/>
+            <circle cx="350" cy="175" r="28" fill="none" stroke="rgba(160,80,255,0.6)" stroke-width="1.5"/>
+            <circle cx="350" cy="175" r="12" fill="rgba(160,80,255,0.38)"/>
+            <circle cx="490" cy="175" r="28" fill="none" stroke="rgba(160,80,255,0.65)" stroke-width="1.5"/>
+            <circle cx="490" cy="175" r="12" fill="rgba(160,80,255,0.45)"/>
+            <circle cx="490" cy="175" r="50" fill="none" stroke="rgba(160,80,255,0.2)">
+              <animate attributeName="r" values="28;58;28" dur="3s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.5;0;0.5" dur="3s" repeatCount="indefinite"/>
+            </circle>
+            <text x="190" y="220" text-anchor="middle" font-size="11" fill="rgba(180,120,255,0.65)" font-family="Inter,sans-serif" letter-spacing="1.5">LEAD</text>
+            <text x="350" y="220" text-anchor="middle" font-size="11" fill="rgba(180,120,255,0.65)" font-family="Inter,sans-serif" letter-spacing="1.5">NURTURE</text>
+            <text x="490" y="220" text-anchor="middle" font-size="11" fill="rgba(180,120,255,0.65)" font-family="Inter,sans-serif" letter-spacing="1.5">CLOSE</text>
+            <line x1="190" y1="147" x2="190" y2="80"  stroke="rgba(160,80,255,0.22)" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="350" y1="147" x2="350" y2="58"  stroke="rgba(160,80,255,0.22)" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="490" y1="147" x2="490" y2="80"  stroke="rgba(160,80,255,0.22)" stroke-width="1" stroke-dasharray="4,4"/>
+            <rect x="148" y="44" width="84" height="34" rx="6" fill="none" stroke="rgba(160,80,255,0.28)" stroke-width="1"/>
+            <rect x="308" y="22" width="84" height="34" rx="6" fill="none" stroke="rgba(160,80,255,0.28)" stroke-width="1"/>
+            <rect x="448" y="44" width="84" height="34" rx="6" fill="none" stroke="rgba(160,80,255,0.28)" stroke-width="1"/>
+          </svg>
+        </div>
+        <p class="service-preview-desc">Custom CRM pipelines with embedded AI that close leads while you focus on what matters.</p>
+        <div class="service-preview-category">Automation · AI · Systems</div>
+        <h2 class="service-preview-name">CRM Systems</h2>
+      </div>
+
+      <!-- State: Web Design -->
+      <div class="preview-state" id="state-web-design">
+        <div class="service-preview-bg" style="background:linear-gradient(135deg,#0c0900 0%,#1a1400 50%,#070600 100%);"></div>
+        <div class="service-preview-visual">
+          <svg viewBox="0 0 580 420" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="20" width="540" height="380" rx="12" fill="none" stroke="rgba(200,160,60,0.22)" stroke-width="1.5"/>
+            <rect x="20" y="20" width="540" height="48" rx="12" fill="rgba(200,160,60,0.04)"/>
+            <line x1="20" y1="68" x2="560" y2="68" stroke="rgba(200,160,60,0.14)" stroke-width="1"/>
+            <circle cx="50"  cy="44" r="6" fill="rgba(200,160,60,0.42)"/>
+            <circle cx="70"  cy="44" r="6" fill="rgba(200,160,60,0.26)"/>
+            <circle cx="90"  cy="44" r="6" fill="rgba(200,160,60,0.16)"/>
+            <rect x="115" y="30" width="330" height="28" rx="14" fill="rgba(200,160,60,0.06)" stroke="rgba(200,160,60,0.18)" stroke-width="1"/>
+            <rect x="40"  y="84"  width="500" height="115" rx="6" fill="rgba(200,160,60,0.05)" stroke="rgba(200,160,60,0.14)" stroke-width="1"/>
+            <rect x="62"  y="108" width="200" height="14" rx="4" fill="rgba(200,160,60,0.30)"/>
+            <rect x="62"  y="130" width="148" height="10" rx="3" fill="rgba(200,160,60,0.17)"/>
+            <rect x="62"  y="150" width="92"  height="22" rx="11" fill="rgba(200,160,60,0.30)"/>
+            <rect x="40"  y="216" width="153" height="125" rx="6" fill="rgba(200,160,60,0.04)" stroke="rgba(200,160,60,0.13)" stroke-width="1"/>
+            <rect x="205" y="216" width="153" height="125" rx="6" fill="rgba(200,160,60,0.04)" stroke="rgba(200,160,60,0.13)" stroke-width="1"/>
+            <rect x="370" y="216" width="170" height="125" rx="6" fill="rgba(200,160,60,0.04)" stroke="rgba(200,160,60,0.13)" stroke-width="1"/>
+            <rect x="56"  y="240" width="80" height="10" rx="3" fill="rgba(200,160,60,0.24)"/>
+            <rect x="56"  y="257" width="58" height="7"  rx="3" fill="rgba(200,160,60,0.13)"/>
+            <rect x="221" y="240" width="80" height="10" rx="3" fill="rgba(200,160,60,0.24)"/>
+            <rect x="221" y="257" width="58" height="7"  rx="3" fill="rgba(200,160,60,0.13)"/>
+            <rect x="386" y="240" width="80" height="10" rx="3" fill="rgba(200,160,60,0.24)"/>
+            <rect x="386" y="257" width="58" height="7"  rx="3" fill="rgba(200,160,60,0.13)"/>
+          </svg>
+        </div>
+        <p class="service-preview-desc">Conversion-obsessed websites built from scratch. Zero templates. Every pixel earns its place.</p>
+        <div class="service-preview-category">Design · Development · CRO</div>
+        <h2 class="service-preview-name">Web Design</h2>
+      </div>
+
+      <!-- State: Interfaces -->
+      <div class="preview-state" id="state-interfaces">
+        <div class="service-preview-bg" style="background:linear-gradient(135deg,#000c1a 0%,#001428 50%,#000508 100%);"></div>
+        <div class="service-preview-visual" style="width:30vw;max-width:340px;">
+          <svg viewBox="0 0 300 560" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="20" width="260" height="520" rx="36" fill="none" stroke="rgba(60,140,255,0.38)" stroke-width="2"/>
+            <rect x="28" y="58" width="244" height="444" rx="28" fill="rgba(60,140,255,0.03)" stroke="rgba(60,140,255,0.16)" stroke-width="1"/>
+            <rect x="118" y="32" width="64" height="16" rx="8" fill="rgba(60,140,255,0.38)"/>
+            <rect x="40"  y="108" width="220" height="92" rx="12" fill="rgba(60,140,255,0.07)" stroke="rgba(60,140,255,0.2)" stroke-width="1"/>
+            <rect x="56"  y="126" width="72"  height="8"  rx="2" fill="rgba(60,140,255,0.48)"/>
+            <rect x="56"  y="142" width="52"  height="6"  rx="2" fill="rgba(60,140,255,0.24)"/>
+            <rect x="56"  y="158" width="38"  height="20" rx="10" fill="rgba(60,140,255,0.40)"/>
+            <rect x="40"  y="216" width="104" height="104" rx="14" fill="rgba(60,140,255,0.05)" stroke="rgba(60,140,255,0.18)" stroke-width="1"/>
+            <rect x="156" y="216" width="104" height="104" rx="14" fill="rgba(60,140,255,0.05)" stroke="rgba(60,140,255,0.18)" stroke-width="1"/>
+            <rect x="52"  y="234" width="52"  height="6"  rx="2" fill="rgba(60,140,255,0.32)"/>
+            <rect x="52"  y="248" width="38"  height="5"  rx="2" fill="rgba(60,140,255,0.18)"/>
+            <rect x="168" y="234" width="52"  height="6"  rx="2" fill="rgba(60,140,255,0.32)"/>
+            <rect x="168" y="248" width="38"  height="5"  rx="2" fill="rgba(60,140,255,0.18)"/>
+            <rect x="40"  y="336" width="220" height="10" rx="3" fill="rgba(60,140,255,0.20)"/>
+            <rect x="40"  y="354" width="160" height="8"  rx="3" fill="rgba(60,140,255,0.13)"/>
+            <rect x="40"  y="370" width="180" height="8"  rx="3" fill="rgba(60,140,255,0.10)"/>
+            <line x1="28" y1="442" x2="272" y2="442" stroke="rgba(60,140,255,0.18)" stroke-width="1"/>
+            <circle cx="100" cy="462" r="6" fill="rgba(60,140,255,0.52)"/>
+            <circle cx="150" cy="462" r="6" fill="rgba(60,140,255,0.20)"/>
+            <circle cx="200" cy="462" r="6" fill="rgba(60,140,255,0.20)"/>
+            <rect x="118" y="484" width="64" height="5" rx="2.5" fill="rgba(60,140,255,0.38)"/>
+            <rect x="16"  y="140" width="4"  height="50" rx="2" fill="rgba(60,140,255,0.30)"/>
+            <rect x="280" y="140" width="4"  height="70" rx="2" fill="rgba(60,140,255,0.30)"/>
+          </svg>
+        </div>
+        <p class="service-preview-desc">Digital interfaces that feel inevitable. Component systems built for scale and delight.</p>
+        <div class="service-preview-category">UI Design · UX · Interaction</div>
+        <h2 class="service-preview-name">Interfaces</h2>
+      </div>
+
+    </div><!-- /.hero-area -->
+
+    <!-- Marquee -->
+    <div class="marquee-wrap"><div class="marquee-track" id="marqueeTrack"></div></div>
+
+    <!-- About -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-label reveal">About</div>
+        <div class="two-col">
+          <div>
+            <h2 class="section-headline reveal">Not an agency.<br>A growth partner.</h2>
+          </div>
+          <div class="two-col-body reveal reveal-d2">
+            <p>Since 2024, we've helped ambitious brands dominate their market through AI-powered marketing, custom websites, and automated CRM systems.</p>
+            <p>We work with a deliberately small number of brands at a time — because doing fewer things better is the only model that produces results worth talking about.</p>
+            <p>From full-funnel Meta campaigns to bespoke CRM automation and premium digital experiences, every engagement is built around one metric: your growth.</p>
+            <div style="margin-top:36px;"><a href="book-a-call.html" class="cta-btn"><span>Start a Conversation</span></a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section style="padding:0 5vw 100px;position:relative;z-index:5;background:#000;">
+      <div class="stats-row reveal">
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="340" data-suffix="%">0%</span></div>
+          <div class="stat-label">Average ROAS increase<br>across all clients</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">$<span data-count="12" data-suffix="M+">0</span></div>
+          <div class="stat-label">Ad spend managed<br>and optimised</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="47">0</span></div>
+          <div class="stat-label">Brands scaled with<br>measurable results</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-strip reveal">
+      <div class="cta-strip-text">Ready to build something?</div>
+      <a href="book-a-call.html" class="cta-btn"><span>Book a Call &rarr;</span></a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="footer-copy">&copy; 2025 Momentum Agency. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="all-work.html"    class="footer-link">Work</a>
+        <a href="book-a-call.html" class="footer-link">Contact</a>
+        <a href="#"                class="footer-link">Privacy</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+  <script type="module">
+    import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js";
+    TubesCursor(document.getElementById('canvas'), {
+      tubes: {
+        count: 3,
+        radius: 0.009,
+        length: 0.15,
+        colors: ["#ffffff", "#111111", "#1a0033"],
+        lights: {
+          intensity: 156,
+          colors: ["#ffffff", "#ccccff", "#0d0026", "#ffffff"]
+        }
+      }
+    });
+  </script>
+  <script>
+    buildMarquee('marqueeTrack', ['MOMENTUM','Meta Ads','Custom Websites','AI-Powered CRMs','Growth Systems','ROAS Engineering','Paid Media','Automation','Digital Strategy']);
+
+    setTimeout(function () {
+      document.getElementById('mainNav').classList.add('loaded');
+      document.getElementById('mainSidebar').classList.add('loaded');
+    }, 500);
+
+    // Sidebar hover previews (Metalab interaction)
+    var sidebarItems  = document.querySelectorAll('.sidebar-item[data-preview]');
+    var previewStates = document.querySelectorAll('.preview-state');
+
+    sidebarItems.forEach(function (item) {
+      item.addEventListener('mouseenter', function () {
+        var id = 'state-' + item.getAttribute('data-preview');
+        previewStates.forEach(function (s) { s.classList.remove('active'); });
+        var target = document.getElementById(id);
+        if (target) target.classList.add('active');
+        sidebarItems.forEach(function (s) { s.classList.remove('active'); });
+        item.classList.add('active');
+      });
+      item.addEventListener('mouseleave', function () {
+        previewStates.forEach(function (s) { s.classList.remove('active'); });
+        document.getElementById('state-home').classList.add('active');
+        sidebarItems.forEach(function (s) { s.classList.remove('active'); });
+      });
+    });
+  </script>
+</body>
+</html>

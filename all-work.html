@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Work — Momentum</title>
+  <meta name="description" content="Momentum is a full-service marketing, development, and creative agency. Marketers, developers, designers, and AI specialists — all in one team.">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .nav, .sidebar { opacity: 0; transition: opacity 0.8s ease; }
+    .nav.loaded, .sidebar.loaded { opacity: 1; }
+    .coverage-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.07); border-radius:12px; overflow:hidden; margin-top:48px; }
+    .coverage-block { background:#000; padding:40px 36px; transition:background 0.2s; }
+    .coverage-block:hover { background:rgba(255,255,255,0.02); }
+    .coverage-category { font-size:11px; font-weight:700; letter-spacing:2px; color:rgba(255,255,255,0.3); margin-bottom:20px; }
+    .coverage-list { list-style:none; margin:0; padding:0; }
+    .coverage-list li { font-size:15px; color:rgba(255,255,255,0.75); padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-weight:400; }
+    .coverage-list li:last-child { border-bottom:none; }
+    .team-strip { display:flex; flex-wrap:wrap; gap:10px; margin-top:32px; }
+    .team-pill { padding:9px 20px; border:1px solid rgba(255,255,255,0.12); border-radius:100px; font-size:13px; color:rgba(255,255,255,0.65); background:rgba(255,255,255,0.03); }
+    @media(max-width:700px) { .coverage-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+  <canvas id="canvas"></canvas>
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div class="page-transition" id="pageTransition"></div>
+
+  <nav class="nav" id="mainNav">
+    <div class="nav-left">
+      <button class="nav-menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+          <line x1="0" y1="1" x2="14" y2="1" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="0" y1="9" x2="14" y2="9" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Menu
+      </button>
+    </div>
+    <a href="index.html" class="nav-logo">Momentum</a>
+    <div class="nav-right">
+      <div class="nav-location-time">
+        <span class="nav-location">NYC</span>
+        <span class="nav-time">00:00:00</span>
+      </div>
+      <a href="book-a-call.html" class="nav-email-btn" aria-label="Book a Call">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <div class="menu-overlay" id="menuOverlay" role="dialog" aria-modal="true">
+    <button class="nav-menu-btn menu-close-btn" id="menuClose" style="position:absolute;top:20px;left:24px;" aria-label="Close menu">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Close
+    </button>
+    <nav class="menu-links">
+      <a href="index.html"        class="menu-link-item"><span class="menu-link-num">01</span><span class="menu-link-text">Home</span></a>
+      <a href="meta-ads.html"     class="menu-link-item"><span class="menu-link-num">02</span><span class="menu-link-text">Meta Ads</span></a>
+      <a href="crm-systems.html"  class="menu-link-item"><span class="menu-link-num">03</span><span class="menu-link-text">CRM Systems</span></a>
+      <a href="web-design.html"   class="menu-link-item"><span class="menu-link-num">04</span><span class="menu-link-text">Web Design</span></a>
+      <a href="interfaces.html"   class="menu-link-item"><span class="menu-link-num">05</span><span class="menu-link-text">Interfaces</span></a>
+      <a href="all-work.html"     class="menu-link-item"><span class="menu-link-num">06</span><span class="menu-link-text">All Work</span></a>
+      <a href="book-a-call.html"  class="menu-link-item"><span class="menu-link-num">07</span><span class="menu-link-text">Book a Call</span></a>
+    </nav>
+    <div class="menu-footer">
+      <div class="menu-footer-col"><span class="menu-footer-label">Email</span><span class="menu-footer-val">hello@momentum.agency</span></div>
+      <div class="menu-footer-col"><span class="menu-footer-label">Social</span><span class="menu-footer-val">@momentum.agency</span></div>
+      <div class="menu-footer-col"><span class="menu-footer-label">Based</span><span class="menu-footer-val">New York City</span></div>
+    </div>
+  </div>
+
+  <aside class="sidebar" id="mainSidebar">
+    <a href="meta-ads.html"    class="sidebar-item">Meta Ads</a>
+    <a href="crm-systems.html" class="sidebar-item">CRM Systems</a>
+    <a href="web-design.html"  class="sidebar-item">Web Design</a>
+    <a href="interfaces.html"  class="sidebar-item">Interfaces</a>
+    <a href="all-work.html"    class="sidebar-item active">All Work</a>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="page-hero">
+      <div class="hero-bg" style="background:linear-gradient(135deg,#050505 0%,#0a0a0a 50%,#000 100%);"></div>
+      <div class="hero-visual">
+        <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+          <rect x="40" y="40" width="120" height="80" rx="8" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+          <rect x="200" y="40" width="120" height="80" rx="8" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+          <rect x="360" y="40" width="120" height="80" rx="8" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+          <rect x="120" y="200" width="120" height="80" rx="8" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1.5"/>
+          <rect x="280" y="200" width="120" height="80" rx="8" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1.5"/>
+          <rect x="200" y="340" width="120" height="50" rx="8" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+          <line x1="100" y1="120" x2="260" y2="200" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="5,3"/>
+          <line x1="260" y1="120" x2="260" y2="200" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="5,3"/>
+          <line x1="420" y1="120" x2="340" y2="200" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="5,3"/>
+          <line x1="180" y1="280" x2="260" y2="340" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="5,3"/>
+          <line x1="340" y1="280" x2="260" y2="340" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="5,3"/>
+          <text x="100" y="85" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.35)" font-family="Poppins,sans-serif" letter-spacing="1">ADS</text>
+          <text x="260" y="85" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.35)" font-family="Poppins,sans-serif" letter-spacing="1">CRM</text>
+          <text x="420" y="85" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.35)" font-family="Poppins,sans-serif" letter-spacing="1">WEB</text>
+          <text x="180" y="245" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.45)" font-family="Poppins,sans-serif" letter-spacing="1">DESIGN</text>
+          <text x="340" y="245" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.45)" font-family="Poppins,sans-serif" letter-spacing="1">DEV</text>
+          <text x="260" y="370" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.75)" font-family="Poppins,sans-serif" letter-spacing="2" font-weight="600">GROWTH</text>
+        </svg>
+      </div>
+      <p class="hero-desc">Marketers, developers, designers, editors, videographers, AI specialists — one team, one goal.</p>
+      <div class="hero-tags">Full-Service · Strategy · Execution</div>
+      <h1 class="hero-name" style="font-size:clamp(42px,6vw,100px);font-style:normal;font-weight:700;">
+        <span class="hero-name-inner">Everything You Need.<br>One Team.</span>
+      </h1>
+    </div>
+
+    <div class="marquee-wrap"><div class="marquee-track" id="marqueeTrack"></div></div>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-label reveal">Who We Are</div>
+        <div class="two-col">
+          <div><h2 class="section-headline reveal">A full-service team<br>built for growth.</h2></div>
+          <div class="two-col-body reveal reveal-d2">
+            <p>Momentum is a full-service marketing, development, and creative agency. We have marketers, developers, designers, editors, videographers, AI specialists, CRM consultants, and brand strategists — all working together to grow your business.</p>
+            <p>We don't outsource. We don't use freelancers. Every person on your project is part of our core team, aligned on one metric: your growth.</p>
+            <div class="team-strip">
+              <span class="team-pill">Marketers</span>
+              <span class="team-pill">Developers</span>
+              <span class="team-pill">Designers</span>
+              <span class="team-pill">Videographers</span>
+              <span class="team-pill">AI Specialists</span>
+              <span class="team-pill">CRM Consultants</span>
+              <span class="team-pill">Brand Strategists</span>
+              <span class="team-pill">Editors</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:0 5vw 100px;position:relative;z-index:5;background:#000;">
+      <div class="stats-row reveal">
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="200" data-suffix="+">0</span></div>
+          <div class="stat-label">Clients served<br>since 2024</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">$<span data-count="2" data-suffix="M+">0</span></div>
+          <div class="stat-label">Ad spend<br>managed</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="50" data-suffix="+">0</span></div>
+          <div class="stat-label">Websites<br>built</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="500" data-suffix="+">0</span></div>
+          <div class="stat-label">Automations<br>deployed</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="section-label reveal">What We Cover</div>
+        <h2 class="section-headline reveal" style="margin-bottom:8px;">Every discipline.<br>One team.</h2>
+        <p class="reveal reveal-d1" style="color:rgba(255,255,255,0.5);font-size:15px;max-width:520px;margin-bottom:0;">From paid media and creative production to development and design — we cover it all under one roof.</p>
+        <div class="coverage-grid reveal reveal-d2">
+          <div class="coverage-block">
+            <div class="coverage-category">MARKETING</div>
+            <ul class="coverage-list">
+              <li>Meta Ads — Facebook &amp; Instagram</li>
+              <li>Google Ads &amp; Search</li>
+              <li>Instagram &amp; TikTok Organic</li>
+              <li>TV Commercials</li>
+              <li>Full Funnel Campaign Strategy</li>
+              <li>Scaling &amp; ROAS Optimization</li>
+            </ul>
+          </div>
+          <div class="coverage-block">
+            <div class="coverage-category">CREATIVE</div>
+            <ul class="coverage-list">
+              <li>Logo Design &amp; Brand Identity</li>
+              <li>Graphic Art &amp; Illustration</li>
+              <li>AI-Generated Content</li>
+              <li>Real Filmography &amp; Video</li>
+              <li>Commercial Video Editing</li>
+              <li>Product Photography</li>
+            </ul>
+          </div>
+          <div class="coverage-block">
+            <div class="coverage-category">DEVELOPMENT</div>
+            <ul class="coverage-list">
+              <li>Custom Websites &amp; Landing Pages</li>
+              <li>CRM Systems &amp; Automation</li>
+              <li>AI Agents &amp; Chatbots</li>
+              <li>Mobile Apps</li>
+              <li>E-commerce Stores</li>
+              <li>Automation Pipelines</li>
+            </ul>
+          </div>
+          <div class="coverage-block">
+            <div class="coverage-category">DESIGN</div>
+            <ul class="coverage-list">
+              <li>UI / UX Interfaces</li>
+              <li>Brand Design Systems</li>
+              <li>Motion Graphics &amp; Animation</li>
+              <li>App &amp; Game UI Design</li>
+              <li>Pitch Decks &amp; Presentations</li>
+              <li>Print &amp; Digital Collateral</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="section-label reveal">Global Team</div>
+        <div class="two-col">
+          <div><h2 class="section-headline reveal">Available<br>24/7.</h2></div>
+          <div class="two-col-body reveal reveal-d2">
+            <p>Our global team of specialists operates across time zones, so your project never sleeps. Whether it's a late-night campaign emergency or a same-day creative request — we're there.</p>
+            <p>Based in New York City. Built everywhere.</p>
+            <div style="margin-top:36px;"><a href="book-a-call.html" class="cta-btn"><span>Book a Call &rarr;</span></a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta-strip reveal">
+      <div class="cta-strip-text">Let's build something great together.</div>
+      <a href="book-a-call.html" class="cta-btn"><span>Book a Call &rarr;</span></a>
+    </div>
+
+    <footer class="footer">
+      <span class="footer-copy">&copy; 2025 Momentum Agency. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="all-work.html"    class="footer-link">Work</a>
+        <a href="book-a-call.html" class="footer-link">Contact</a>
+        <a href="#"                class="footer-link">Privacy</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+  <script type="module">
+    import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js";
+    TubesCursor(document.getElementById('canvas'), {
+      tubes: {
+        count: 3, radius: 0.009, length: 0.15,
+        colors: ["#ffffff", "#111111", "#1a0033"],
+        lights: { intensity: 156, colors: ["#ffffff", "#ccccff", "#0d0026", "#ffffff"] }
+      }
+    });
+  </script>
+  <script>
+    buildMarquee('marqueeTrack', ['MOMENTUM','Full-Service Agency','Meta Ads','CRM Systems','Web Design','AI Agents','Video Production','Brand Identity','Automation','Growth']);
+    setTimeout(function () {
+      document.getElementById('mainNav').classList.add('loaded');
+      document.getElementById('mainSidebar').classList.add('loaded');
+    }, 500);
+  </script>
+</body>
+</html>

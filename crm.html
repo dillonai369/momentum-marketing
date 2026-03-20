@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM Systems — Momentum Agency</title>
+  <meta name="description" content="Custom CRM pipelines that convert leads while you sleep. AI-driven automation built for growth businesses." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root { --hero-bg: linear-gradient(135deg, #08020f 0%, #150a28 50%, #060010 100%); }
+    .page-hero { background: var(--hero-bg); }
+  </style>
+</head>
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div class="page-transition"></div>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-left">
+      <button class="nav-menu-btn" aria-label="Open menu">
+        <div class="menu-bars"><span></span><span></span></div>
+        Menu
+      </button>
+    </div>
+    <a href="index.html" class="nav-logo">Momentum</a>
+    <div class="nav-right">
+      <div class="nav-location-time">
+        <span class="nav-location">NYC</span>
+        <span class="nav-time">00:00:00</span>
+      </div>
+      <a href="book-a-call.html" class="nav-email-btn" aria-label="Contact">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Menu Overlay -->
+  <div class="menu-overlay" role="dialog" aria-modal="true">
+    <button class="menu-close-btn nav-menu-btn" style="position:absolute;top:20px;left:28px;" aria-label="Close menu">
+      <div class="menu-bars">
+        <span style="transform:rotate(45deg) translate(2px,3px)"></span>
+        <span style="transform:rotate(-45deg) translate(2px,-3px)"></span>
+      </div>
+      Close
+    </button>
+    <nav class="menu-links">
+      <a href="index.html"       class="menu-link-item"><span class="menu-link-num">01</span>Home</a>
+      <a href="meta-ads.html"    class="menu-link-item"><span class="menu-link-num">02</span>Meta Ads</a>
+      <a href="crm.html"         class="menu-link-item"><span class="menu-link-num">03</span>CRM Systems</a>
+      <a href="web-design.html"  class="menu-link-item"><span class="menu-link-num">04</span>Web Design</a>
+      <a href="interfaces.html"  class="menu-link-item"><span class="menu-link-num">05</span>Interfaces</a>
+      <a href="all-work.html"    class="menu-link-item"><span class="menu-link-num">06</span>All Work</a>
+      <a href="book-a-call.html" class="menu-link-item"><span class="menu-link-num">07</span>Book a Call</a>
+    </nav>
+    <div class="menu-footer">
+      <div class="menu-footer-col"><span class="menu-footer-label">Email</span><span class="menu-footer-val">hello@momentum.agency</span></div>
+      <div class="menu-footer-col"><span class="menu-footer-label">Instagram</span><span class="menu-footer-val">@momentum.agency</span></div>
+      <div class="menu-footer-col"><span class="menu-footer-label">Based</span><span class="menu-footer-val">New York City</span></div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="meta-ads.html"   class="sidebar-item">Meta Ads</a>
+    <a href="crm.html"        class="sidebar-item active">CRM Systems</a>
+    <a href="web-design.html" class="sidebar-item">Web Design</a>
+    <a href="interfaces.html" class="sidebar-item">Interfaces</a>
+    <a href="all-work.html"   class="sidebar-item">All Work</a>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="hero-abstract">
+        <svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <!-- Background grid lines -->
+          <line x1="0"    y1="300" x2="1200" y2="300" stroke="rgba(160,80,255,0.06)" stroke-width="1"/>
+          <line x1="0"    y1="450" x2="1200" y2="450" stroke="rgba(160,80,255,0.06)" stroke-width="1"/>
+          <line x1="0"    y1="600" x2="1200" y2="600" stroke="rgba(160,80,255,0.06)" stroke-width="1"/>
+          <line x1="200"  y1="0"   x2="200"  y2="900" stroke="rgba(160,80,255,0.06)" stroke-width="1"/>
+          <line x1="400"  y1="0"   x2="400"  y2="900" stroke="rgba(160,80,255,0.06)" stroke-width="1"/>
+          <line x1="600"  y1="0"   x2="600"  y2="900" stroke="rgba(160,80,255,0.06)" stroke-width="1"/>
+          <line x1="800"  y1="0"   x2="800"  y2="900" stroke="rgba(160,80,255,0.06)" stroke-width="1"/>
+          <line x1="1000" y1="0"   x2="1000" y2="900" stroke="rgba(160,80,255,0.06)" stroke-width="1"/>
+
+          <!-- Main pipeline horizontal connector -->
+          <line x1="100" y1="450" x2="1100" y2="450" stroke="rgba(160,80,255,0.25)" stroke-width="2" stroke-dasharray="10,6"/>
+
+          <!-- Stage nodes: Lead, Qualify, Nurture, Close -->
+          <!-- Lead -->
+          <circle cx="240"  cy="450" r="48" fill="rgba(160,80,255,0.08)" stroke="rgba(160,80,255,0.45)" stroke-width="1.5"/>
+          <circle cx="240"  cy="450" r="24" fill="rgba(160,80,255,0.18)" stroke="rgba(160,80,255,0.60)" stroke-width="1.5"/>
+          <circle cx="240"  cy="450" r="8"  fill="rgba(180,100,255,0.9)"/>
+          <text x="240" y="520" text-anchor="middle" font-size="13" fill="rgba(200,140,255,0.7)" font-family="Inter,sans-serif" letter-spacing="2" font-weight="500">LEAD</text>
+
+          <!-- Qualify -->
+          <circle cx="480"  cy="450" r="48" fill="rgba(160,80,255,0.08)" stroke="rgba(160,80,255,0.45)" stroke-width="1.5"/>
+          <circle cx="480"  cy="450" r="24" fill="rgba(160,80,255,0.18)" stroke="rgba(160,80,255,0.60)" stroke-width="1.5"/>
+          <circle cx="480"  cy="450" r="8"  fill="rgba(180,100,255,0.9)"/>
+          <text x="480" y="520" text-anchor="middle" font-size="13" fill="rgba(200,140,255,0.7)" font-family="Inter,sans-serif" letter-spacing="2" font-weight="500">QUALIFY</text>
+
+          <!-- Nurture -->
+          <circle cx="720"  cy="450" r="48" fill="rgba(160,80,255,0.08)" stroke="rgba(160,80,255,0.45)" stroke-width="1.5"/>
+          <circle cx="720"  cy="450" r="24" fill="rgba(160,80,255,0.18)" stroke="rgba(160,80,255,0.60)" stroke-width="1.5"/>
+          <circle cx="720"  cy="450" r="8"  fill="rgba(180,100,255,0.9)"/>
+          <text x="720" y="520" text-anchor="middle" font-size="13" fill="rgba(200,140,255,0.7)" font-family="Inter,sans-serif" letter-spacing="2" font-weight="500">NURTURE</text>
+
+          <!-- Close -->
+          <circle cx="960"  cy="450" r="60" fill="rgba(160,80,255,0.12)" stroke="rgba(200,120,255,0.60)" stroke-width="2"/>
+          <circle cx="960"  cy="450" r="32" fill="rgba(160,80,255,0.25)" stroke="rgba(200,120,255,0.80)" stroke-width="1.5"/>
+          <circle cx="960"  cy="450" r="12" fill="rgba(210,130,255,1)"/>
+          <text x="960" y="532" text-anchor="middle" font-size="13" fill="rgba(200,140,255,0.8)" font-family="Inter,sans-serif" letter-spacing="2" font-weight="500">CLOSE</text>
+
+          <!-- Pulse animations on Close node -->
+          <circle cx="960" cy="450" r="60" fill="none" stroke="rgba(180,80,255,0.35)" stroke-width="1">
+            <animate attributeName="r" values="60;100;60" dur="2.5s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.5;0;0.5" dur="2.5s" repeatCount="indefinite"/>
+          </circle>
+
+          <!-- Vertical branch lines from nodes -->
+          <line x1="240" y1="402"  x2="240" y2="240"  stroke="rgba(160,80,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="480" y1="402"  x2="480" y2="200"  stroke="rgba(160,80,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="720" y1="402"  x2="720" y2="220"  stroke="rgba(160,80,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+
+          <!-- Branch cards -->
+          <rect x="170" y="180" width="140" height="58" rx="8" fill="rgba(160,80,255,0.08)" stroke="rgba(160,80,255,0.30)" stroke-width="1"/>
+          <rect x="185" y="196" width="80"  height="8"  rx="2" fill="rgba(180,100,255,0.40)"/>
+          <rect x="185" y="212" width="55"  height="6"  rx="2" fill="rgba(180,100,255,0.20)"/>
+
+          <rect x="410" y="140" width="140" height="58" rx="8" fill="rgba(160,80,255,0.08)" stroke="rgba(160,80,255,0.30)" stroke-width="1"/>
+          <rect x="425" y="156" width="80"  height="8"  rx="2" fill="rgba(180,100,255,0.40)"/>
+          <rect x="425" y="172" width="55"  height="6"  rx="2" fill="rgba(180,100,255,0.20)"/>
+
+          <rect x="650" y="160" width="140" height="58" rx="8" fill="rgba(160,80,255,0.08)" stroke="rgba(160,80,255,0.30)" stroke-width="1"/>
+          <rect x="665" y="176" width="80"  height="8"  rx="2" fill="rgba(180,100,255,0.40)"/>
+          <rect x="665" y="192" width="55"  height="6"  rx="2" fill="rgba(180,100,255,0.20)"/>
+
+          <!-- AI brain / neural net below -->
+          <circle cx="600" cy="700" r="50"  fill="rgba(160,80,255,0.05)" stroke="rgba(160,80,255,0.20)" stroke-width="1"/>
+          <circle cx="490" cy="760" r="20"  fill="none" stroke="rgba(160,80,255,0.18)" stroke-width="1"/>
+          <circle cx="710" cy="760" r="20"  fill="none" stroke="rgba(160,80,255,0.18)" stroke-width="1"/>
+          <circle cx="600" cy="810" r="20"  fill="none" stroke="rgba(160,80,255,0.18)" stroke-width="1"/>
+          <line x1="600" y1="650" x2="490" y2="740" stroke="rgba(160,80,255,0.15)" stroke-width="1"/>
+          <line x1="600" y1="650" x2="710" y2="740" stroke="rgba(160,80,255,0.15)" stroke-width="1"/>
+          <line x1="600" y1="750" x2="600" y2="790" stroke="rgba(160,80,255,0.15)" stroke-width="1"/>
+          <text x="600" y="706" text-anchor="middle" font-size="10" fill="rgba(180,100,255,0.55)" font-family="Inter,sans-serif" letter-spacing="1.5">AI</text>
+        </svg>
+      </div>
+      <div class="hero-content">
+        <div class="hero-tags">Automation &middot; AI &middot; Systems</div>
+        <h1 class="hero-name">CRM Systems</h1>
+      </div>
+      <p class="hero-desc">Custom pipelines that convert leads while you sleep. Built on intelligence, not just automation.</p>
+    </section>
+
+    <!-- Marquee -->
+    <div class="marquee-wrap">
+      <div class="marquee-track" id="marqueeTrack"></div>
+    </div>
+
+    <!-- What We Do -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-label reveal">What We Do</div>
+        <div class="two-col">
+          <div>
+            <h2 class="section-headline reveal">We build CRMs<br>that think.</h2>
+          </div>
+          <div class="two-col-body reveal reveal-d2">
+            <p>Most CRMs are graveyards — full of contacts that never get touched, sequences that send the same email to everyone, and pipelines that require a full-time person to move things forward.</p>
+            <p>We build systems that behave more like a sales team. AI-driven lead scoring identifies who's ready to buy. Automated sequences personalise outreach based on behavior. Integrations pull data from every touchpoint so nothing falls through the cracks.</p>
+            <p>Whether you're on GoHighLevel, HubSpot, or a custom stack — we architect, build, train, and optimise the entire system. Then we hand it off with documentation and support so your team can run it confidently.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section style="padding: 0 8vw;">
+      <div class="stats-row reveal">
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="3.2" data-suffix="&times;" data-decimal="1">3.2&times;</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-label">Average lead-to-close<br>conversion improvement</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num"><span data-count="89" data-suffix="%">89%</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-label">Automation rate across<br>client pipelines</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">24<span style="font-size:0.5em;vertical-align:middle;">/7</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-label">Follow-up coverage<br>no human required</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-label reveal">Process</div>
+        <h2 class="section-headline reveal">How we work</h2>
+        <div class="process-list">
+          <div class="process-item reveal">
+            <div class="process-num">01</div>
+            <div class="process-content">
+              <div class="process-title">System Mapping</div>
+              <div class="process-body">We map your entire customer journey from first touch to closed deal and beyond. We identify friction points, manual tasks that should be automated, and gaps where leads are leaking. Every build starts with this blueprint.</div>
+            </div>
+          </div>
+          <div class="process-item reveal reveal-d1">
+            <div class="process-num">02</div>
+            <div class="process-content">
+              <div class="process-title">Custom Build</div>
+              <div class="process-body">No templates, no copy-paste playbooks. We build your pipeline from scratch — stages, fields, triggers, automations, and integrations — all tailored to your specific sales process and industry.</div>
+            </div>
+          </div>
+          <div class="process-item reveal reveal-d2">
+            <div class="process-num">03</div>
+            <div class="process-content">
+              <div class="process-title">AI Training</div>
+              <div class="process-body">We configure and train AI components to score leads, personalise outreach copy, route conversations, and flag high-intent signals. The system learns your business and gets smarter over time.</div>
+            </div>
+          </div>
+          <div class="process-item reveal reveal-d3">
+            <div class="process-num">04</div>
+            <div class="process-content">
+              <div class="process-title">Continuous Optimisation</div>
+              <div class="process-body">We monitor conversion rates at each pipeline stage monthly, A/B test email and SMS sequences, and iterate based on what the data tells us. Your CRM is never "finished" — it evolves with your business.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="section-label reveal">Selected Results</div>
+        <div class="results-list">
+          <div class="result-item reveal">
+            <div>
+              <div class="result-client">Atlas Realty Group</div>
+              <div class="result-service">CRM Systems &middot; Real Estate</div>
+            </div>
+            <div class="result-metric">$2.1M pipeline in 60 days</div>
+          </div>
+          <div class="result-item reveal reveal-d1">
+            <div>
+              <div class="result-client">Summit Dental</div>
+              <div class="result-service">CRM Systems &middot; Healthcare</div>
+            </div>
+            <div class="result-metric">89% appointment show rate</div>
+          </div>
+          <div class="result-item reveal reveal-d2">
+            <div>
+              <div class="result-client">Forte Fitness</div>
+              <div class="result-service">CRM Systems &middot; Fitness</div>
+            </div>
+            <div class="result-metric">3&times; member retention</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-strip reveal">
+      <div class="cta-strip-text">Ready to automate<br>your pipeline?</div>
+      <a href="book-a-call.html" class="cta-btn"><span>Book a Strategy Call &rarr;</span></a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="footer-copy">&copy; 2025 Momentum Agency. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="all-work.html"    class="footer-link">Work</a>
+        <a href="book-a-call.html" class="footer-link">Contact</a>
+        <a href="#"                class="footer-link">Privacy</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    buildMarquee('marqueeTrack', [
+      'CRM Systems','AI Lead Scoring','Pipeline Automation','24/7 Follow-Up',
+      'GoHighLevel','HubSpot','Custom Stacks','Integration Architecture'
+    ]);
+  </script>
+</body>
+</html>
