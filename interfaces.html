@@ -10,21 +10,63 @@
   <style>
     .nav, .sidebar { opacity: 0; transition: opacity 0.8s ease; }
     .nav.loaded, .sidebar.loaded { opacity: 1; }
-    .interface-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.07); border-radius:12px; overflow:hidden; margin-top:40px; }
-    .interface-item { background:#000; padding:28px 24px; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); transition:background 0.2s; }
-    .interface-item:hover { background:rgba(255,255,255,0.04); }
+
+    /* Green accent tokens */
+    :root {
+      --green:      #10b981;
+      --green-dim:  rgba(16,185,129,0.18);
+      --green-glow: rgba(16,185,129,0.08);
+      --green-line: rgba(16,185,129,0.30);
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse at 15% 50%, rgba(16,185,129,0.22) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 15%, rgba(0,120,90,0.18) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 90%, rgba(0,80,60,0.15) 0%, transparent 48%),
+        #000;
+    }
+
+    /* Section label */
+    .if-label { font-size:10.5px; letter-spacing:0.3em; text-transform:uppercase; color:var(--green); opacity:0.7; margin-bottom:22px; }
+
+    /* Stats */
+    .if-stats-row { display:flex; gap:0; border:1px solid rgba(255,255,255,0.06); border-radius:10px; overflow:hidden; margin-top:48px; }
+    .if-stat-block { flex:1; padding:32px 28px; border-right:1px solid rgba(255,255,255,0.06); background:#000; }
+    .if-stat-block:last-child { border-right:none; }
+    .if-stat-num { font-size:clamp(28px,3.5vw,48px); font-weight:700; letter-spacing:-0.03em; color:var(--green); line-height:1; margin-bottom:8px; }
+    .if-stat-label { font-size:12px; color:rgba(255,255,255,0.4); line-height:1.5; }
+
+    /* Interface grid with green hover */
+    .interface-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.06); border-radius:12px; overflow:hidden; margin-top:40px; }
+    .interface-item { background:#000; padding:28px 24px; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); transition:background 0.2s; position:relative; overflow:hidden; }
+    .interface-item::before { content:''; position:absolute; top:0;left:0;right:0; height:1.5px; background:linear-gradient(90deg,transparent,var(--green),transparent); opacity:0; transition:opacity 0.3s; }
+    .interface-item:hover { background:var(--green-glow); }
+    .interface-item:hover::before { opacity:1; }
     .interface-item span { display:block; font-size:11px; font-weight:400; color:rgba(255,255,255,0.35); margin-top:4px; }
+
+    /* Process flow with green nums */
     .process-flow { display:flex; gap:0; margin-top:40px; flex-wrap:wrap; }
-    .flow-step { flex:1; min-width:120px; padding:24px 20px; border-left:1px solid rgba(255,255,255,0.08); position:relative; }
+    .flow-step { flex:1; min-width:120px; padding:24px 20px; border-left:1px solid rgba(16,185,129,0.12); position:relative; }
     .flow-step:first-child { border-left:none; }
-    .flow-num { font-size:11px; font-weight:700; color:rgba(255,255,255,0.25); letter-spacing:2px; margin-bottom:10px; }
+    .flow-num { font-size:11px; font-weight:700; color:var(--green); opacity:0.7; letter-spacing:2px; margin-bottom:10px; }
     .flow-label { font-size:15px; font-weight:600; color:rgba(255,255,255,0.9); }
     .flow-desc { font-size:12px; color:rgba(255,255,255,0.4); margin-top:6px; line-height:1.5; }
-    @media(max-width:700px) { .interface-grid { grid-template-columns:1fr 1fr; } .process-flow { flex-direction:column; } .flow-step { border-left:none; border-top:1px solid rgba(255,255,255,0.08); } .flow-step:first-child { border-top:none; } }
+    @media(max-width:700px) { .interface-grid { grid-template-columns:1fr 1fr; } .process-flow { flex-direction:column; } .flow-step { border-left:none; border-top:1px solid rgba(16,185,129,0.12); } .flow-step:first-child { border-top:none; } }
+
     #star-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
     .star { position: absolute; background: white; border-radius: 50%; opacity: 0.8; animation: twinkle var(--duration, 3s) infinite ease-in-out; will-change: transform, opacity; }
     @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
-    body { background: linear-gradient(160deg, #000c1a 0%, #001428 30%, #000e22 65%, #000508 100%) fixed; }
+
+    /* CTA strip */
+    .if-cta-strip { margin:0 5vw 0; padding:56px 48px; border:1px solid rgba(16,185,129,0.18); border-radius:14px; background:linear-gradient(135deg, rgba(16,185,129,0.06) 0%, rgba(0,0,0,0) 60%); display:flex; align-items:center; justify-content:space-between; gap:24px; position:relative; z-index:5; }
+    .if-cta-text { font-family:'Poppins',sans-serif;font-size:clamp(20px,2.5vw,32px);font-weight:600;letter-spacing:-0.02em;line-height:1.2; }
+    .if-cta-text span { color:var(--green); }
+    .if-cta-btn { display:inline-flex;align-items:center;gap:10px; padding:14px 28px; background:var(--green); color:#fff; border-radius:6px; font-size:13px; font-weight:600; white-space:nowrap; transition:filter 0.2s,transform 0.2s; text-decoration:none; }
+    .if-cta-btn:hover { filter:brightness(0.85); transform:translateY(-1px); }
+
+    /* Process num accent */
+    .process-item .process-num { color:var(--green) !important; border-color:rgba(16,185,129,0.18) !important; }
   </style>
 </head>
 <body>
@@ -121,49 +163,49 @@
             .if-home   { opacity:0; animation: ifFadeUp 0.3s ease-out 1.95s forwards; }
           </style>
           <!-- Phone outer shell -->
-          <rect class="if-outer" x="20" y="20" width="260" height="520" rx="36" fill="none" stroke="rgba(60,140,255,0.42)" stroke-width="2"/>
+          <rect class="if-outer" x="20" y="20" width="260" height="520" rx="36" fill="none" stroke="rgba(16,185,129,0.42)" stroke-width="2"/>
           <!-- Inner screen -->
-          <rect class="if-screen" x="28" y="58" width="244" height="444" rx="28" fill="rgba(60,140,255,0.03)" stroke="rgba(60,140,255,0.18)" stroke-width="1"/>
+          <rect class="if-screen" x="28" y="58" width="244" height="444" rx="28" fill="rgba(16,185,129,0.03)" stroke="rgba(16,185,129,0.18)" stroke-width="1"/>
           <!-- Dynamic island / notch -->
-          <rect class="if-notch" x="118" y="32" width="64" height="16" rx="8" fill="rgba(60,140,255,0.42)"/>
+          <rect class="if-notch" x="118" y="32" width="64" height="16" rx="8" fill="rgba(16,185,129,0.42)"/>
           <!-- Hero card -->
-          <rect class="if-card" x="40" y="108" width="220" height="92" rx="12" fill="rgba(60,140,255,0.07)" stroke="rgba(60,140,255,0.22)" stroke-width="1"/>
+          <rect class="if-card" x="40" y="108" width="220" height="92" rx="12" fill="rgba(16,185,129,0.07)" stroke="rgba(16,185,129,0.22)" stroke-width="1"/>
           <!-- Card title -->
-          <rect class="if-title" x="56" y="126" width="72" height="8" rx="2" fill="rgba(60,140,255,0.52)"/>
+          <rect class="if-title" x="56" y="126" width="72" height="8" rx="2" fill="rgba(16,185,129,0.52)"/>
           <!-- Card subtitle -->
-          <rect class="if-sub" x="56" y="142" width="52" height="6" rx="2" fill="rgba(60,140,255,0.26)"/>
+          <rect class="if-sub" x="56" y="142" width="52" height="6" rx="2" fill="rgba(16,185,129,0.26)"/>
           <!-- CTA button -->
-          <rect class="if-btn" x="56" y="158" width="38" height="20" rx="10" fill="rgba(60,140,255,0.44)"/>
+          <rect class="if-btn" x="56" y="158" width="38" height="20" rx="10" fill="rgba(16,185,129,0.44)"/>
           <!-- Grid card left -->
           <g class="if-gc1">
-            <rect x="40"  y="216" width="104" height="104" rx="14" fill="rgba(60,140,255,0.05)" stroke="rgba(60,140,255,0.20)" stroke-width="1"/>
-            <rect x="52"  y="234" width="52"  height="6"  rx="2" fill="rgba(60,140,255,0.34)"/>
-            <rect x="52"  y="248" width="38"  height="5"  rx="2" fill="rgba(60,140,255,0.20)"/>
+            <rect x="40"  y="216" width="104" height="104" rx="14" fill="rgba(16,185,129,0.05)" stroke="rgba(16,185,129,0.20)" stroke-width="1"/>
+            <rect x="52"  y="234" width="52"  height="6"  rx="2" fill="rgba(16,185,129,0.34)"/>
+            <rect x="52"  y="248" width="38"  height="5"  rx="2" fill="rgba(16,185,129,0.20)"/>
           </g>
           <!-- Grid card right -->
           <g class="if-gc2">
-            <rect x="156" y="216" width="104" height="104" rx="14" fill="rgba(60,140,255,0.05)" stroke="rgba(60,140,255,0.20)" stroke-width="1"/>
-            <rect x="168" y="234" width="52"  height="6"  rx="2" fill="rgba(60,140,255,0.34)"/>
-            <rect x="168" y="248" width="38"  height="5"  rx="2" fill="rgba(60,140,255,0.20)"/>
+            <rect x="156" y="216" width="104" height="104" rx="14" fill="rgba(16,185,129,0.05)" stroke="rgba(16,185,129,0.20)" stroke-width="1"/>
+            <rect x="168" y="234" width="52"  height="6"  rx="2" fill="rgba(16,185,129,0.34)"/>
+            <rect x="168" y="248" width="38"  height="5"  rx="2" fill="rgba(16,185,129,0.20)"/>
           </g>
           <!-- Body text lines -->
           <g class="if-text">
-            <rect x="40" y="336" width="220" height="10" rx="3" fill="rgba(60,140,255,0.22)"/>
-            <rect x="40" y="354" width="160" height="8"  rx="3" fill="rgba(60,140,255,0.14)"/>
-            <rect x="40" y="370" width="180" height="8"  rx="3" fill="rgba(60,140,255,0.11)"/>
+            <rect x="40" y="336" width="220" height="10" rx="3" fill="rgba(16,185,129,0.22)"/>
+            <rect x="40" y="354" width="160" height="8"  rx="3" fill="rgba(16,185,129,0.14)"/>
+            <rect x="40" y="370" width="180" height="8"  rx="3" fill="rgba(16,185,129,0.11)"/>
           </g>
           <!-- Tab bar line -->
-          <line class="if-nav" x1="28" y1="442" x2="272" y2="442" stroke="rgba(60,140,255,0.20)" stroke-width="1"/>
+          <line class="if-nav" x1="28" y1="442" x2="272" y2="442" stroke="rgba(16,185,129,0.20)" stroke-width="1"/>
           <!-- Nav dots -->
-          <circle class="if-dot1" cx="100" cy="462" r="6" fill="rgba(60,140,255,0.55)"/>
-          <circle class="if-dot2" cx="150" cy="462" r="6" fill="rgba(60,140,255,0.22)"/>
-          <circle class="if-dot3" cx="200" cy="462" r="6" fill="rgba(60,140,255,0.22)"/>
+          <circle class="if-dot1" cx="100" cy="462" r="6" fill="rgba(16,185,129,0.55)"/>
+          <circle class="if-dot2" cx="150" cy="462" r="6" fill="rgba(16,185,129,0.22)"/>
+          <circle class="if-dot3" cx="200" cy="462" r="6" fill="rgba(16,185,129,0.22)"/>
           <!-- Home bar -->
-          <rect class="if-home" x="118" y="484" width="64" height="5" rx="2.5" fill="rgba(60,140,255,0.40)"/>
+          <rect class="if-home" x="118" y="484" width="64" height="5" rx="2.5" fill="rgba(16,185,129,0.40)"/>
           <!-- Side buttons -->
           <g class="if-sides">
-            <rect x="16"  y="140" width="4" height="50" rx="2" fill="rgba(60,140,255,0.32)"/>
-            <rect x="280" y="140" width="4" height="70" rx="2" fill="rgba(60,140,255,0.32)"/>
+            <rect x="16"  y="140" width="4" height="50" rx="2" fill="rgba(16,185,129,0.32)"/>
+            <rect x="280" y="140" width="4" height="70" rx="2" fill="rgba(16,185,129,0.32)"/>
           </g>
         </svg>
       </div>
@@ -178,7 +220,7 @@
 
     <section class="section">
       <div class="section-inner">
-        <div class="section-label reveal">What We Do</div>
+        <div class="section-label reveal" style="color:var(--green);opacity:0.7;">What We Do</div>
         <div class="two-col">
           <div><h2 class="section-headline reveal">Design and build<br>any interface.</h2></div>
           <div class="two-col-body reveal reveal-d2">
@@ -190,25 +232,25 @@
     </section>
 
     <section style="padding:0 5vw 100px;position:relative;z-index:5;background:#000;">
-      <div class="stats-row reveal">
-        <div class="stat-block">
-          <div class="stat-num"><span data-count="30" data-suffix="+">0</span></div>
-          <div class="stat-label">Interfaces<br>shipped</div>
+      <div class="if-stats-row reveal">
+        <div class="if-stat-block">
+          <div class="if-stat-num"><span data-count="30" data-suffix="+">0</span></div>
+          <div class="if-stat-label">Interfaces<br>shipped</div>
         </div>
-        <div class="stat-block">
-          <div class="stat-num"><span data-count="100" data-suffix="%">0%</span></div>
-          <div class="stat-label">App Store<br>ready builds</div>
+        <div class="if-stat-block">
+          <div class="if-stat-num"><span data-count="100" data-suffix="%">0%</span></div>
+          <div class="if-stat-label">App Store<br>ready builds</div>
         </div>
-        <div class="stat-block">
-          <div class="stat-num"><span data-count="100" data-suffix="%">0%</span></div>
-          <div class="stat-label">AI-native<br>design systems</div>
+        <div class="if-stat-block">
+          <div class="if-stat-num"><span data-count="100" data-suffix="%">0%</span></div>
+          <div class="if-stat-label">AI-native<br>design systems</div>
         </div>
       </div>
     </section>
 
     <section class="section" style="padding-top:0;">
       <div class="section-inner">
-        <div class="section-label reveal">What We Build</div>
+        <div class="section-label reveal" style="color:var(--green);opacity:0.7;">What We Build</div>
         <h2 class="section-headline reveal" style="margin-bottom:8px;">Every type of interface.</h2>
         <p class="reveal reveal-d1" style="color:rgba(255,255,255,0.5);font-size:15px;max-width:500px;margin-bottom:0;">From native mobile apps to AI agent dashboards to App Store ready games.</p>
         <div class="interface-grid reveal reveal-d2">
@@ -227,7 +269,7 @@
 
     <section class="section" style="padding-top:0;">
       <div class="section-inner">
-        <div class="section-label reveal">Our Process</div>
+        <div class="section-label reveal" style="color:var(--green);opacity:0.7;">Our Process</div>
         <h2 class="section-headline reveal" style="margin-bottom:40px;">From brief to launch.</h2>
         <div class="process-flow reveal reveal-d1">
           <div class="flow-step">
@@ -264,9 +306,9 @@
       </div>
     </section>
 
-    <div class="cta-strip reveal">
-      <div class="cta-strip-text">Ready to build your interface?</div>
-      <a href="book-a-call.html" class="cta-btn"><span>Book a Call &rarr;</span></a>
+    <div class="if-cta-strip reveal">
+      <div class="if-cta-text">Ready to <span>build your interface?</span></div>
+      <a href="book-a-call.html" class="if-cta-btn">Book a Call &rarr;</a>
     </div>
 
     <footer class="footer">
