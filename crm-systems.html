@@ -6,6 +6,7 @@
   <title>CRM Systems — Momentum</title>
   <meta name="description" content="Fully custom CRM systems for any business. Every lead captured, nurtured, and closed automatically.">
   <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
   <style>
     .nav, .sidebar { opacity: 0; transition: opacity 0.8s ease; }
     .nav.loaded, .sidebar.loaded { opacity: 1; }
@@ -19,11 +20,15 @@
     .build-item { padding:24px; border:1px solid rgba(255,255,255,0.08); border-radius:10px; font-size:14px; font-weight:600; color:rgba(255,255,255,0.85); background:rgba(255,255,255,0.02); }
     .build-item span { display:block; font-size:12px; font-weight:400; color:rgba(255,255,255,0.4); margin-top:6px; line-height:1.5; }
     @media(max-width:700px) { .platform-grid { grid-template-columns:1fr 1fr; } .build-list { grid-template-columns:1fr; } }
+    #star-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
+    .star { position: absolute; background: white; border-radius: 50%; opacity: 0.8; animation: twinkle var(--duration, 3s) infinite ease-in-out; will-change: transform, opacity; }
+    @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+    body { background: linear-gradient(160deg, #08020f 0%, #150a28 30%, #0a0020 65%, #030008 100%) fixed; }
   </style>
 </head>
 <body>
 
-  <canvas id="canvas"></canvas>
+  <div id="star-container"></div>
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
   <div class="page-transition" id="pageTransition"></div>
@@ -87,26 +92,53 @@
   <main class="main-content">
 
     <div class="page-hero">
-      <div class="hero-bg" style="background:linear-gradient(135deg,#08020f 0%,#150a28 50%,#060010 100%);"></div>
+      <div class="hero-bg" style="background: transparent;"></div>
       <div class="hero-visual">
         <svg viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg">
-          <line x1="60"  y1="175" x2="162" y2="175" stroke="rgba(160,80,255,0.4)" stroke-width="1.5" stroke-dasharray="6,4"/>
-          <line x1="218" y1="175" x2="322" y2="175" stroke="rgba(160,80,255,0.4)" stroke-width="1.5" stroke-dasharray="6,4"/>
-          <line x1="378" y1="175" x2="462" y2="175" stroke="rgba(160,80,255,0.4)" stroke-width="1.5" stroke-dasharray="6,4"/>
-          <line x1="518" y1="175" x2="560" y2="175" stroke="rgba(160,80,255,0.4)" stroke-width="1.5" stroke-dasharray="6,4"/>
-          <circle cx="190" cy="175" r="28" fill="none" stroke="rgba(160,80,255,0.6)" stroke-width="1.5"/>
-          <circle cx="190" cy="175" r="12" fill="rgba(160,80,255,0.38)"/>
-          <circle cx="350" cy="175" r="28" fill="none" stroke="rgba(160,80,255,0.6)" stroke-width="1.5"/>
-          <circle cx="350" cy="175" r="12" fill="rgba(160,80,255,0.38)"/>
-          <circle cx="490" cy="175" r="28" fill="none" stroke="rgba(160,80,255,0.65)" stroke-width="1.5"/>
-          <circle cx="490" cy="175" r="12" fill="rgba(160,80,255,0.45)"/>
-          <circle cx="490" cy="175" r="50" fill="none" stroke="rgba(160,80,255,0.2)">
-            <animate attributeName="r" values="28;58;28" dur="3s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values="0.5;0;0.5" dur="3s" repeatCount="indefinite"/>
-          </circle>
-          <text x="190" y="220" text-anchor="middle" font-size="11" fill="rgba(180,120,255,0.65)" font-family="Poppins,sans-serif" letter-spacing="1.5">LEAD</text>
-          <text x="350" y="220" text-anchor="middle" font-size="11" fill="rgba(180,120,255,0.65)" font-family="Poppins,sans-serif" letter-spacing="1.5">NURTURE</text>
-          <text x="490" y="220" text-anchor="middle" font-size="11" fill="rgba(180,120,255,0.65)" font-family="Poppins,sans-serif" letter-spacing="1.5">CLOSE</text>
+          <style>
+            @keyframes crmLineIn { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+            @keyframes crmNodeIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+            @keyframes crmLblIn  { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+            @keyframes burstRing { 0% { transform: scale(0.8); opacity: 0; } 40% { transform: scale(1.7); opacity: 0.8; } 100% { transform: scale(2.6); opacity: 0; } }
+            .g-li  { transform-box: fill-box; transform-origin: left center; transform: scaleX(0); opacity: 0; animation: crmLineIn 0.4s ease-out 0.1s forwards; }
+            .g-ln  { transform-origin: 190px 175px; transform: scale(0); opacity: 0; animation: crmNodeIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.4s forwards; }
+            .g-ll  { opacity: 0; animation: crmLblIn 0.3s ease-out 0.75s forwards; }
+            .g-c1  { transform-box: fill-box; transform-origin: left center; transform: scaleX(0); opacity: 0; animation: crmLineIn 0.45s ease-out 0.85s forwards; }
+            .g-nn  { transform-origin: 350px 175px; transform: scale(0); opacity: 0; animation: crmNodeIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 1.15s forwards; }
+            .g-nl  { opacity: 0; animation: crmLblIn 0.3s ease-out 1.45s forwards; }
+            .g-c2  { transform-box: fill-box; transform-origin: left center; transform: scaleX(0); opacity: 0; animation: crmLineIn 0.45s ease-out 1.55s forwards; }
+            .g-cn  { transform-origin: 490px 175px; transform: scale(0); opacity: 0; animation: crmNodeIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 1.85s forwards; }
+            .g-cb  { transform-origin: 490px 175px; transform: scale(0); opacity: 0; animation: burstRing 0.9s cubic-bezier(0.2,0,0.8,1) 2.0s forwards; }
+            .g-cp  { opacity: 0; animation: crmLblIn 0.1s 2.35s forwards; }
+            .g-ct  { transform-box: fill-box; transform-origin: left center; transform: scaleX(0); opacity: 0; animation: crmLineIn 0.3s ease-out 2.05s forwards; }
+            .g-cl  { opacity: 0; animation: crmLblIn 0.3s ease-out 2.15s forwards; }
+          </style>
+          <g class="g-li"><line x1="60" y1="175" x2="162" y2="175" stroke="rgba(160,80,255,0.5)" stroke-width="1.5" stroke-dasharray="6,4"/></g>
+          <g class="g-ln">
+            <circle cx="190" cy="175" r="28" fill="none" stroke="rgba(160,80,255,0.7)" stroke-width="1.5"/>
+            <circle cx="190" cy="175" r="12" fill="rgba(160,80,255,0.5)"/>
+          </g>
+          <g class="g-ll"><text x="190" y="222" text-anchor="middle" font-size="11" fill="rgba(200,140,255,0.8)" font-family="Poppins,sans-serif" letter-spacing="1.5">LEAD</text></g>
+          <g class="g-c1"><line x1="218" y1="175" x2="322" y2="175" stroke="rgba(160,80,255,0.5)" stroke-width="1.5" stroke-dasharray="6,4"/></g>
+          <g class="g-nn">
+            <circle cx="350" cy="175" r="28" fill="none" stroke="rgba(160,80,255,0.7)" stroke-width="1.5"/>
+            <circle cx="350" cy="175" r="12" fill="rgba(160,80,255,0.5)"/>
+          </g>
+          <g class="g-nl"><text x="350" y="222" text-anchor="middle" font-size="11" fill="rgba(200,140,255,0.8)" font-family="Poppins,sans-serif" letter-spacing="1.5">NURTURE</text></g>
+          <g class="g-c2"><line x1="378" y1="175" x2="462" y2="175" stroke="rgba(160,80,255,0.5)" stroke-width="1.5" stroke-dasharray="6,4"/></g>
+          <g class="g-cn">
+            <circle cx="490" cy="175" r="28" fill="none" stroke="rgba(185,100,255,0.8)" stroke-width="1.5"/>
+            <circle cx="490" cy="175" r="12" fill="rgba(185,100,255,0.6)"/>
+          </g>
+          <circle class="g-cb" cx="490" cy="175" r="28" fill="none" stroke="rgba(210,130,255,0.85)" stroke-width="2.5"/>
+          <g class="g-cp">
+            <circle cx="490" cy="175" r="50" fill="none" stroke="rgba(160,80,255,0.2)">
+              <animate attributeName="r" values="28;60;28" dur="2.8s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.6;0;0.6" dur="2.8s" repeatCount="indefinite"/>
+            </circle>
+          </g>
+          <g class="g-ct"><line x1="518" y1="175" x2="560" y2="175" stroke="rgba(160,80,255,0.5)" stroke-width="1.5" stroke-dasharray="6,4"/></g>
+          <g class="g-cl"><text x="490" y="222" text-anchor="middle" font-size="11" fill="rgba(210,150,255,0.9)" font-family="Poppins,sans-serif" letter-spacing="1.5">CLOSE</text></g>
         </svg>
       </div>
       <p class="hero-desc">Custom CRM pipelines that capture every lead and close them while you sleep.</p>
@@ -230,16 +262,6 @@
   </main>
 
   <script src="script.js"></script>
-  <script type="module">
-    import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js";
-    TubesCursor(document.getElementById('canvas'), {
-      tubes: {
-        count: 3, radius: 0.009, length: 0.15,
-        colors: ["#ffffff", "#111111", "#1a0033"],
-        lights: { intensity: 156, colors: ["#ffffff", "#ccccff", "#0d0026", "#ffffff"] }
-      }
-    });
-  </script>
   <script>
     buildMarquee('marqueeTrack', ['CRM Systems','Lead Automation','GoHighLevel','AI Follow-Up','Pipeline Automation','Webhook Integration','SMS Sequences','Appointment Booking','Custom CRM']);
     setTimeout(function () {
@@ -247,5 +269,42 @@
       document.getElementById('mainSidebar').classList.add('loaded');
     }, 500);
   </script>
+  <script>
+const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+requestAnimationFrame(raf);
+(function() {
+  const container = document.getElementById('star-container');
+  container.innerHTML = '';
+  const stars = [];
+  for (let i = 0; i < 150; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    const isStatic = Math.random() < 0.3;
+    const z = isStatic ? 0 : 0.2 + Math.random() * 0.6;
+    const size = isStatic ? 1 + Math.random() : 1 + Math.random() * 2;
+    s.style.left = x + '%';
+    s.style.top = y + '%';
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.setProperty('--duration', (2 + Math.random() * 4) + 's');
+    s.style.animationDelay = (Math.random() * 5) + 's';
+    container.appendChild(s);
+    stars.push({ el: s, initialY: y, speed: z });
+  }
+  lenis.on('scroll', ({ scroll, velocity }) => {
+    const stretch = Math.max(1, Math.min(1 + Math.abs(velocity) * 0.15, 4));
+    stars.forEach(star => {
+      if (star.speed === 0) { star.el.style.transform = 'scaleY(1)'; return; }
+      let pos = (star.initialY - (scroll * star.speed * 0.05)) % 100;
+      if (pos < 0) pos += 100;
+      star.el.style.top = pos + '%';
+      star.el.style.transform = 'scaleY(' + stretch + ')';
+    });
+  });
+})();
+</script>
 </body>
 </html>

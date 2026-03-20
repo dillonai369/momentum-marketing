@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Momentum — The M</title>
+  <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three":         "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; background:#000; overflow:hidden; }
+    canvas { display:block; }
+    #back {
+      position:fixed; top:28px; left:28px;
+      font-family:'Poppins','Inter',sans-serif;
+      font-size:12px; letter-spacing:.12em;
+      color:rgba(255,255,255,.35); text-decoration:none; z-index:10;
+      transition:color .25s;
+    }
+    #back:hover { color:rgba(255,255,255,.85); }
+    #label {
+      position:fixed; bottom:34px; left:50%; transform:translateX(-50%);
+      font-family:'Poppins','Inter',sans-serif;
+      font-size:10px; letter-spacing:.45em; text-transform:uppercase;
+      color:rgba(255,255,255,.15); white-space:nowrap; z-index:10; pointer-events:none;
+    }
+    #hint {
+      position:fixed; bottom:34px; right:28px;
+      font-family:'Poppins','Inter',sans-serif;
+      font-size:11px; letter-spacing:.06em; color:rgba(255,255,255,.12);
+      z-index:10; pointer-events:none;
+    }
+  </style>
+</head>
+<body>
+  <a href="all-work.html" id="back">← Back</a>
+  <div id="label">Momentum — The M</div>
+  <div id="hint">drag to rotate</div>
+
+  <script type="module">
+    import * as THREE          from 'three';
+    import { OrbitControls }   from 'three/addons/controls/OrbitControls.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+    /* ─── Renderer ────────────────────────────────────────────── */
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.toneMapping        = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 2.4;
+    renderer.outputColorSpace   = THREE.SRGBColorSpace;
+    document.body.appendChild(renderer.domElement);
+
+    /* ─── Scene / Camera ──────────────────────────────────────── */
+    const scene  = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+    const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, .1, 1000);
+    camera.position.set(0, 0, 160);
+
+    /* ─── Environment ─────────────────────────────────────────── */
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
+    pmrem.dispose();
+
+    /* ─── Controls ────────────────────────────────────────────── */
+    const ctrl = new OrbitControls(camera, renderer.domElement);
+    ctrl.enableDamping   = true;
+    ctrl.dampingFactor   = .04;
+    ctrl.autoRotate      = true;
+    ctrl.autoRotateSpeed = .5;
+    ctrl.enablePan       = false;
+    ctrl.minDistance     = 60;
+    ctrl.maxDistance     = 260;
+
+    /* ─── GLSL Simplex Noise ──────────────────────────────────── */
+    const NOISE = /* glsl */`
+      vec3 _m289(vec3 x){return x-floor(x*(1./289.))*289.;}
+      vec4 _m289(vec4 x){return x-floor(x*(1./289.))*289.;}
+      vec4 _perm(vec4 x){return _m289(((x*34.)+1.)*x);}
+      vec4 _tis(vec4 r){return 1.79284291400159-.85373472095314*r;}
+      float snoise(vec3 v){
+        const vec2 C=vec2(1./6.,1./3.); const vec4 D=vec4(0.,.5,1.,2.);
+        vec3 i=floor(v+dot(v,C.yyy)); vec3 x0=v-i+dot(i,C.xxx);
+        vec3 g=step(x0.yzx,x0.xyz); vec3 l=1.-g;
+        vec3 i1=min(g.xyz,l.zxy); vec3 i2=max(g.xyz,l.zxy);
+        vec3 x1=x0-i1+C.xxx; vec3 x2=x0-i2+C.yyy; vec3 x3=x0-D.yyy;
+        i=_m289(i);
+        vec4 p=_perm(_perm(_perm(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));
+        float n_=.142857142857; vec3 ns=n_*D.wyz-D.xzx;
+        vec4 j=p-49.*floor(p*ns.z*ns.z);
+        vec4 x_=floor(j*ns.z); vec4 y_=floor(j-7.*x_);
+        vec4 x=x_*ns.x+ns.yyyy; vec4 y=y_*ns.x+ns.yyyy; vec4 h=1.-abs(x)-abs(y);
+        vec4 b0=vec4(x.xy,y.xy); vec4 b1=vec4(x.zw,y.zw);
+        vec4 s0=floor(b0)*2.+1.; vec4 s1=floor(b1)*2.+1.; vec4 sh=-step(h,vec4(0.));
+        vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy; vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+        vec3 p0=vec3(a0.xy,h.x); vec3 p1=vec3(a0.zw,h.y);
+        vec3 p2=vec3(a1.xy,h.z); vec3 p3=vec3(a1.zw,h.w);
+        vec4 nm=_tis(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
+        p0*=nm.x; p1*=nm.y; p2*=nm.z; p3*=nm.w;
+        vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.); m=m*m;
+        return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
+      }`;
+
+    /* ─── Smooth M Shape (THREE.Shape with bezier corners) ────── */
+    function buildMShape() {
+      const s = new THREE.Shape();
+      const r = 4.5; // outer corner radius
+      const d = 0.447, e = 0.894; // unit vector components for 1:2 diagonal
+
+      s.moveTo(10, 90 - r);
+      s.quadraticCurveTo(10, 90, 10 + r, 90);       // BL corner
+      s.lineTo(25 - r, 90);
+      s.quadraticCurveTo(25, 90, 25, 90 - r);        // inner-BL corner
+      s.lineTo(25, 35 + r * e);
+      s.quadraticCurveTo(25, 35, 25 + r * d, 35 - r * e); // inner-L V join
+      s.lineTo(45 - r * d, 75 + r * e);
+      s.quadraticCurveTo(45, 75, 45 + r, 75);        // inner V left notch
+      s.lineTo(55 - r, 75);
+      s.quadraticCurveTo(55, 75, 55 + r * d, 75 + r * e); // inner V right notch
+      s.lineTo(75 - r * d, 35 - r * e);
+      s.quadraticCurveTo(75, 35, 75, 35 + r * e);    // inner-R V join
+      s.lineTo(75, 90 - r);
+      s.quadraticCurveTo(75, 90, 75 + r, 90);        // inner-BR corner
+      s.lineTo(90 - r, 90);
+      s.quadraticCurveTo(90, 90, 90, 90 - r);        // BR corner
+      s.lineTo(90, 10 + r);
+      s.quadraticCurveTo(90, 10, 90 - r, 10);        // TR corner
+      s.lineTo(70 + r, 10);
+      s.quadraticCurveTo(70, 10, 70 - r * d, 10 + r * e); // R diagonal top
+      s.lineTo(50 + r * d, 50 - r * e);
+      s.quadraticCurveTo(50, 50, 50 - r * d, 50 - r * e); // center V tip
+      s.lineTo(30 + r * d, 10 + r * e);
+      s.quadraticCurveTo(30, 10, 30 - r, 10);        // L diagonal top
+      s.lineTo(10 + r, 10);
+      s.quadraticCurveTo(10, 10, 10, 10 + r);        // TL corner
+      s.lineTo(10, 90 - r);
+      s.closePath();
+      return s;
+    }
+
+    /* ─── Material ────────────────────────────────────────────── */
+    const uTime = { value: 0 };
+    const mat = new THREE.MeshPhysicalMaterial({
+      color:                     0xffffff,
+      metalness:                 0.92,
+      roughness:                 0.08,
+      clearcoat:                 0.40,
+      clearcoatRoughness:        0.05,
+      iridescence:               0.95,
+      iridescenceIOR:            1.3,
+      iridescenceThicknessRange: [400, 800],
+      envMapIntensity:           4.0,
+    });
+
+    mat.onBeforeCompile = (sh) => {
+      sh.uniforms.uTime = uTime;
+      sh.vertexShader = sh.vertexShader
+        .replace('#include <common>',
+          `#include <common>\nuniform float uTime;\n${NOISE}`)
+        .replace('#include <begin_vertex>',
+          `#include <begin_vertex>
+           vec3 _np = position * 0.022 + vec3(uTime * 0.10);
+           float _n1 = snoise(_np);
+           float _n2 = snoise(_np + vec3(4.1,1.7,2.9));
+           float _n3 = snoise(_np + vec3(1.3,5.1,0.8));
+           transformed += normal * _n1 * 0.7;
+           transformed.x += _n2 * 0.28;
+           transformed.y += _n3 * 0.28;`)
+        .replace('#include <beginnormal_vertex>',
+          `#include <beginnormal_vertex>
+           vec3 _np2 = position * 0.022 + vec3(uTime * 0.10);
+           objectNormal = normalize(objectNormal + vec3(
+             snoise(_np2),
+             snoise(_np2 + vec3(2.3,0.7,4.1)),
+             snoise(_np2 + vec3(3.9,2.8,1.2))) * 0.22);`);
+    };
+
+    /* ─── Geometry ────────────────────────────────────────────── */
+    const geo = new THREE.ExtrudeGeometry(buildMShape(), {
+      depth:          16,
+      bevelEnabled:   true,
+      bevelThickness: 4.0,
+      bevelSize:      3.5,
+      bevelOffset:    0,
+      bevelSegments:  24,
+      curveSegments:  32,
+    });
+    geo.computeVertexNormals();
+    geo.center();
+    geo.scale(1.35, -1.35, 1.35);
+
+    const mesh = new THREE.Mesh(geo, mat);
+    scene.add(mesh);
+
+    /* ─── Lights ──────────────────────────────────────────────── */
+    scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+    const L = [
+      new THREE.PointLight(0xffffff, 110, 500),
+      new THREE.PointLight(0x99aaff, 80,  500),
+      new THREE.PointLight(0xffccff, 60,  500),
+      new THREE.PointLight(0xaaffdd, 50,  500),
+    ];
+    L.forEach(l => scene.add(l));
+
+    /* ─── Animate ─────────────────────────────────────────────── */
+    const clock = new THREE.Clock();
+    (function tick() {
+      requestAnimationFrame(tick);
+      const t = clock.getElapsedTime();
+      uTime.value = t;
+      mesh.position.y = Math.sin(t * 0.32) * 2.8;
+      mesh.rotation.x = Math.sin(t * 0.14) * 0.05;
+      L[0].position.set( Math.cos(t*.42)*120,  Math.sin(t*.28)*80,  Math.sin(t*.42)*120);
+      L[1].position.set( Math.cos(t*.25+2)*95,  Math.sin(t*.48+1)*60,  Math.cos(t*.33)*95);
+      L[2].position.set( Math.sin(t*.55)*85, -65+Math.cos(t*.38)*45,  Math.cos(t*.55)*85);
+      L[3].position.set(-Math.sin(t*.20)*100,  Math.cos(t*.52)*55, -Math.cos(t*.20)*100);
+      ctrl.update();
+      renderer.render(scene, camera);
+    })();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+  </script>
+</body>
+</html>

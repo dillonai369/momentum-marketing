@@ -10,9 +10,16 @@
     .nav, .sidebar { opacity: 0; transition: opacity 0.8s ease; }
     .nav.loaded, .sidebar.loaded { opacity: 1; }
   </style>
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+  <style>
+#star-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
+.star { position: absolute; background: white; border-radius: 50%; opacity: 0.8; animation: twinkle var(--duration, 3s) infinite ease-in-out; will-change: transform, opacity; }
+@keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+  </style>
 </head>
 <body>
 
+  <div id="star-container"></div>
   <canvas id="canvas"></canvas>
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
@@ -334,6 +341,43 @@
         sidebarItems.forEach(function (s) { s.classList.remove('active'); });
       });
     });
+  </script>
+  <script>
+const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
+function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+requestAnimationFrame(raf);
+(function() {
+  const container = document.getElementById('star-container');
+  container.innerHTML = '';
+  const stars = [];
+  for (let i = 0; i < 150; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    const isStatic = Math.random() < 0.3;
+    const z = isStatic ? 0 : 0.2 + Math.random() * 0.6;
+    const size = isStatic ? 1 + Math.random() : 1 + Math.random() * 2;
+    s.style.left = x + '%';
+    s.style.top = y + '%';
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.setProperty('--duration', (2 + Math.random() * 4) + 's');
+    s.style.animationDelay = (Math.random() * 5) + 's';
+    container.appendChild(s);
+    stars.push({ el: s, initialY: y, speed: z });
+  }
+  lenis.on('scroll', ({ scroll, velocity }) => {
+    const stretch = Math.max(1, Math.min(1 + Math.abs(velocity) * 0.15, 4));
+    stars.forEach(star => {
+      if (star.speed === 0) { star.el.style.transform = 'scaleY(1)'; return; }
+      let pos = (star.initialY - (scroll * star.speed * 0.05)) % 100;
+      if (pos < 0) pos += 100;
+      star.el.style.top = pos + '%';
+      star.el.style.transform = 'scaleY(' + stretch + ')';
+    });
+  });
+})();
   </script>
 </body>
 </html>
