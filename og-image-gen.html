@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head><title>OG Image Generator</title></head>
+<body style="margin:0;background:#111;">
+<canvas id="c" width="1200" height="630" style="display:block;max-width:100%;"></canvas>
+<p style="color:#666;font-family:sans-serif;padding:12px;font-size:13px;">Image auto-downloads as og-image.png — place it in your momentum folder then push to GitHub.</p>
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+
+// Background
+const bg = ctx.createLinearGradient(0, 0, 1200, 630);
+bg.addColorStop(0, '#000000');
+bg.addColorStop(0.5, '#050008');
+bg.addColorStop(1, '#000000');
+ctx.fillStyle = bg;
+ctx.fillRect(0, 0, 1200, 630);
+
+// Purple radial glow left
+const gl = ctx.createRadialGradient(180, 315, 0, 180, 315, 420);
+gl.addColorStop(0, 'rgba(80,0,160,0.35)');
+gl.addColorStop(1, 'rgba(0,0,0,0)');
+ctx.fillStyle = gl;
+ctx.fillRect(0, 0, 1200, 630);
+
+// Blue radial glow right
+const gr = ctx.createRadialGradient(1020, 160, 0, 1020, 160, 350);
+gr.addColorStop(0, 'rgba(0,40,120,0.30)');
+gr.addColorStop(1, 'rgba(0,0,0,0)');
+ctx.fillStyle = gr;
+ctx.fillRect(0, 0, 1200, 630);
+
+// Draw stars
+ctx.fillStyle = 'rgba(255,255,255,0.55)';
+const starData = [
+  [80,60,1.2],[200,110,0.8],[350,45,1.0],[520,90,0.7],[700,30,1.1],[900,80,0.9],[1050,55,1.3],[1150,120,0.7],
+  [60,200,0.9],[180,280,1.1],[320,190,0.8],[480,250,1.0],[660,170,0.7],[820,230,1.2],[1000,180,0.8],[1140,260,1.0],
+  [100,380,0.8],[260,420,1.1],[400,350,0.9],[580,400,0.7],[760,360,1.0],[940,390,1.2],[1100,340,0.8],
+  [50,500,1.0],[220,560,0.8],[380,520,1.1],[560,570,0.7],[740,510,0.9],[920,550,1.1],[1080,490,0.8],[1160,580,0.9],
+  [140,150,0.6],[440,140,0.9],[630,60,0.7],[850,140,0.8],[1030,300,0.6],[300,500,0.8],[700,450,0.7],[1000,460,1.0]
+];
+starData.forEach(([x,y,r]) => {
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+});
+
+// Growth chart logo mark
+const lx = 96, ly = 200, scale = 2.8;
+ctx.save();
+ctx.translate(lx, ly);
+ctx.scale(scale, scale);
+ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+ctx.lineWidth = 6.5 / scale;
+ctx.lineCap = 'round';
+ctx.lineJoin = 'round';
+ctx.beginPath();
+ctx.moveTo(10, 68); ctx.lineTo(28, 42); ctx.lineTo(40, 56);
+ctx.lineTo(58, 30); ctx.lineTo(68, 46); ctx.lineTo(88, 18);
+ctx.stroke();
+// Arrowhead
+ctx.fillStyle = 'rgba(255,255,255,0.92)';
+ctx.beginPath();
+ctx.moveTo(96, 8); ctx.lineTo(80, 16); ctx.lineTo(89, 18); ctx.lineTo(93, 26);
+ctx.closePath(); ctx.fill();
+ctx.restore();
+
+// Momentum wordmark
+ctx.fillStyle = '#ffffff';
+ctx.font = '700 88px Helvetica Neue, Arial, sans-serif';
+ctx.letterSpacing = '-2px';
+ctx.fillText('Momentum', 96, 400);
+
+// Tagline
+ctx.fillStyle = 'rgba(255,255,255,0.42)';
+ctx.font = '400 28px Helvetica Neue, Arial, sans-serif';
+ctx.fillText('Full-Service Growth Agency  ·  New York City', 98, 450);
+
+// Right side — service tags
+const tags = ['Marketing / Ads', 'CRM Systems', 'Web Design', 'Interfaces', 'AI Systems'];
+const colors = ['rgba(59,130,246,0.75)', 'rgba(124,58,237,0.75)', 'rgba(245,158,11,0.75)', 'rgba(16,185,129,0.75)', 'rgba(229,57,53,0.75)'];
+tags.forEach((tag, i) => {
+  const tx = 760, ty = 180 + i * 70;
+  const w = 360, h = 48;
+  // pill bg
+  ctx.fillStyle = 'rgba(255,255,255,0.04)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.roundRect(tx, ty, w, h, 8);
+  ctx.fill(); ctx.stroke();
+  // color dot
+  ctx.fillStyle = colors[i];
+  ctx.beginPath(); ctx.arc(tx + 22, ty + 24, 5, 0, Math.PI*2); ctx.fill();
+  // tag text
+  ctx.fillStyle = 'rgba(255,255,255,0.78)';
+  ctx.font = '500 18px Helvetica Neue, Arial, sans-serif';
+  ctx.fillText(tag, tx + 40, ty + 31);
+});
+
+// Domain
+ctx.fillStyle = 'rgba(255,255,255,0.18)';
+ctx.font = '400 22px Helvetica Neue, Arial, sans-serif';
+ctx.fillText('momentumarketing.io', 98, 560);
+
+// Top border line
+const border = ctx.createLinearGradient(0, 0, 1200, 0);
+border.addColorStop(0, 'rgba(255,255,255,0)');
+border.addColorStop(0.3, 'rgba(255,255,255,0.15)');
+border.addColorStop(0.7, 'rgba(255,255,255,0.15)');
+border.addColorStop(1, 'rgba(255,255,255,0)');
+ctx.strokeStyle = border;
+ctx.lineWidth = 1;
+ctx.beginPath(); ctx.moveTo(0, 1); ctx.lineTo(1200, 1); ctx.stroke();
+
+// Auto-download
+setTimeout(() => {
+  const a = document.createElement('a');
+  a.download = 'og-image.png';
+  a.href = c.toDataURL('image/png');
+  a.click();
+}, 500);
+</script>
+</body>
+</html>
