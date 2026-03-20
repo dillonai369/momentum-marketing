@@ -84,7 +84,14 @@
         <p class="reveal reveal-d1" style="font-size:15px;line-height:1.65;color:rgba(255,255,255,0.5);max-width:480px;margin-bottom:80px;">Drop us a line — we respond within 24 hours with a free audit of your current growth stack.</p>
 
         <!-- Contact Form -->
-        <form class="contact-form" novalidate>
+        <div id="form-success" style="display:none;padding:40px 0;">
+          <div style="font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:14px;">Message Received</div>
+          <p style="font-size:22px;font-weight:600;margin-bottom:10px;">We'll be in touch within 24 hours.</p>
+          <p style="color:rgba(255,255,255,0.45);font-size:15px;">In the meantime, feel free to explore our work.</p>
+        </div>
+        <form class="contact-form" id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+          <input type="hidden" name="_subject" value="New Momentum Inquiry">
+          <input type="hidden" name="_next" value="https://momentumarketing.io/book-a-call.html?sent=1">
           <div class="form-grid">
 
             <div class="form-field reveal">
@@ -111,7 +118,7 @@
               <label for="service">Service of Interest</label>
               <select id="service" name="service">
                 <option value="" disabled selected>Choose a Service</option>
-                <option value="meta-ads">Meta Ads</option>
+                <option value="meta-ads">Marketing / Ads</option>
                 <option value="crm-systems">CRM Systems</option>
                 <option value="web-design">Web Design</option>
                 <option value="interfaces">Interfaces</option>
@@ -192,6 +199,30 @@
   <script src="script.js"></script>
   <script>
     buildMarquee('marqueeTrack', ['Book a Call','Free Audit','24 Hour Response','hello@momentum.agency','New York City','Global Clients','Get In Touch','Start Growing']);
+
+    // Show success message if redirected back after Formspree submission
+    if (window.location.search.includes('sent=1')) {
+      document.getElementById('contact-form').style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+    }
+
+    // Also handle AJAX submission for nicer UX (no page reload)
+    document.getElementById('contact-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = new FormData(form);
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } });
+        if (res.ok) {
+          form.style.display = 'none';
+          document.getElementById('form-success').style.display = 'block';
+        } else {
+          alert('Something went wrong. Please email us directly at hello@momentum.agency');
+        }
+      } catch(err) {
+        alert('Something went wrong. Please email us directly at hello@momentum.agency');
+      }
+    });
   </script>
 </body>
 </html>
