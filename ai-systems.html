@@ -934,6 +934,15 @@
       const full = [...items,...items].map(t=>`<span class="marquee-item">${t}</span>`).join('');
       track.innerHTML = full;
     })();
+
+    // Show nav + sidebar (required on every page)
+    document.getElementById('mainNav').classList.add('loaded');
+    document.getElementById('mainSidebar').classList.add('loaded');
+
+    // Lenis smooth scroll
+    const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
   </script>
 
 </body>
